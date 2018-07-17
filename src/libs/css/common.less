@@ -1,0 +1,197 @@
+@import "./constant.less";
+.eyChoose {
+    .lblWrp {
+        font-weight: bold;
+        font-size: 20px;
+        height: 30px;
+        line-height: 30px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 7px;
+    }
+    .sWrp {
+        display: inline-block;
+        line-height: 32px;
+    }
+}
+
+.breadCrumb {
+    margin-bottom: 10px;
+}
+
+.fieldset {
+    border-radius: 10px;
+    border: 1px solid @GRAY-50;
+    background-color: @WHITE-50;
+    padding: 0 35px;
+    legend {
+        font-size: 13px;
+        padding: 0 5px;
+    }
+}
+
+.search {
+    height: 100px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.formItem45 {
+    width: 45%;
+}
+
+.formItem60 {
+    width: 60%;
+}
+
+.formItem80 {
+    width: 80%;
+}
+
+.formItem100 {
+    width: 100%;
+}
+
+.add {
+    margin: 20px 0 !important;
+}
+
+.edit {
+    cursor: pointer;
+    color: @BLUE;
+    margin: 0 10px;
+    width: 50px;
+    display: inline-block;
+}
+
+.btn {
+    margin-top: 100px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+
+.tc {
+    text-align: center;
+}
+
+.paging.tr {
+    text-align: right;
+}
+
+// 公用样式
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+/* flex布局 */
+
+.mui-flex,
+.mui-flex *,
+.mui-flex :after,
+.mui-flex :before {
+    box-sizing: border-box;
+}
+
+.mui-flex.alc {
+    align-items: center;
+}
+
+.mui-flex {
+    display: -webkit-box !important;
+    display: -webkit-flex !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap
+}
+
+.mui-flex>.cell {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    width: 0;
+    -webkit-flex-basis: 0;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    max-width: 100%;
+    display: block;
+    padding: 0 !important;
+    position: relative
+}
+
+.mui-flex>.cell.fixed {
+    -webkit-box-flex: 0 !important;
+    -webkit-flex: none !important;
+    -ms-flex: none !important;
+    flex: none !important;
+    width: auto
+}
+
+/* 强制换行 */
+
+.bk {
+    word-wrap: break-word;
+}
+
+/*文本超出省略号显示*/
+
+.txt-ovh {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.txt-2ovh {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.mgc {
+    margin: 0 auto;
+}
+.textRight{
+  text-align: right;
+}
+.flex{
+  display: flex;
+  .flex-item{
+    flex: 1;
+  }
+}
+
+.aLink{
+  cursor: pointer;
+}

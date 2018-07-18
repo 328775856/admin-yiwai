@@ -8,26 +8,24 @@
         </div>
       </div>
       <div class="fl">
-        <div  class="innerWrp bk">
+        <div class="innerWrp bk">
           <p>目前收录作品数：</p>
           <p class="pNum">{{productNum}}</p>
         </div>
       </div>
       <div class="fl">
-        <div  class="innerWrp bk">
+        <div class="innerWrp bk">
           <p>目前收录艺术家数：</p>
           <P class="pNum">{{artistNum}}</P>
         </div>
       </div>
     </div>
-
   </div>
 
 </template>
 
 <script>
 import { getCustomerList, getProductList, getArtistList } from './Index.service';
-
 export default {
   name: 'Index',
   data() {
@@ -83,8 +81,6 @@ export default {
         console.log('reject');
       });
     },
-
-
   }
 }
 </script>
@@ -94,24 +90,24 @@ export default {
 @import "../../libs/css/common.less";
 
 #index {
-  p{
+  p {
     font-size: 18px;
   }
   .pNum {
     font-size: 40px;
     font-weight: bold;
   }
-  .fl{
+  .fl {
     margin-right: 30px;
   }
-  .fl:last-child{
+  .fl:last-child {
     margin-right: 0;
   }
-  .innerWrp{
+  .innerWrp {
     border-radius: 4px;
-    border:1px solid #dddee1;
+    border: 1px solid #dddee1;
     margin: 0 auto;
-    padding:30px;
+    padding: 30px;
   }
 }
 </style>

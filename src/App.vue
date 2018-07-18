@@ -11,5 +11,6 @@ export default {
 </script>
 
 <style lang="less">
-
+@import 'iview/dist/styles/iview.css';
+@import 'libs/css/my-theme/index.less';
 </style>

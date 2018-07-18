@@ -115,19 +115,23 @@ export default {
             },
             {
               title: '编号',
-              key: 'relationArtistId'
+              key: 'relationArtistId',
+              align:'center'
             },
             {
               title: '艺术家名称',
-              key: 'relationArtistName'
+              key: 'relationArtistName',
+              align:'center'
             },
             {
               title: '创建时间',
-              key: 'gmtCreate'
+              key: 'gmtCreate',
+              align:'center'
             },
             {
               title: '操作',
               key: 'action',
+              align:'center',
               render:(h,params) =>{
                 const data = params.row;
                 const {id} = params.row;

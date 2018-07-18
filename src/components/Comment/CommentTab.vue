@@ -12,6 +12,9 @@
       <TabPane :label="labelList[1]">
         <CommentArtist ></CommentArtist>
       </TabPane>
+      <TabPane :label="labelList[2]">
+        <CommentExhibition ></CommentExhibition>
+      </TabPane>
     </Tabs>
   </div>
 </template>
@@ -28,9 +31,10 @@ import {
   Select,
   Option,
   Input
-} from 'iview';
-import Comment from './Comment.vue';
-import CommentArtist from './CommentArtist.vue';
+} from 'iview'
+import Comment from './Comment.vue'
+import CommentArtist from './CommentArtist.vue'
+import CommentExhibition from './CommentExhibition'
 
 export default {
   name: 'Customer',
@@ -46,43 +50,43 @@ export default {
     Option,
     Input,
     Comment,
-    CommentArtist
+    CommentArtist,
+    CommentExhibition
   },
   data() {
     return {
-      labelList: ['作品评论列表', '艺术家评论列表'],
+      labelList: ['作品评论列表', '艺术家评论列表', '展览评论列表'],
       breadName: '作品评论列表',
-      index:0
+      index: 0
     }
   },
-    created() {
-      const { params, query } = this.$route;
-      if (params.tab === '0' || query.tab == 0) {
-        this.index = 0;
-      } else if (params.tab === '1' || query.tab == 1) {
-        this.index = 1;
-      }
+  created() {
+    const { params, query } = this.$route
+    if (params.tab === '0' || query.tab == 0) {
+      this.index = 0
+    } else if (params.tab === '1' || query.tab == 1) {
+      this.index = 1
+    } else if (params.tab === '2' || query.tab == 2) {
+      this.index = 2
+    }
   },
   watch: {
-    '$route'(newValue, oldValue) {
-      const { params, query } = this.$route;
+    $route(newValue, oldValue) {
+      const { params, query } = this.$route
       if (params.tab === '0' || query.tab == 0) {
-        this.index = 0;
+        this.index = 0
       } else if (params.tab === '1' || query.tab == 1) {
-        this.index = 1;
+        this.index = 1
       }
     }
   },
-  mounted() {
-
-   },
+  mounted() {},
   methods: {
     tabsChange(index) {
-      this.breadName = this.labelList[index];
+      this.breadName = this.labelList[index]
     }
   }
 }
-
 </script>
 
 <style lang="less">

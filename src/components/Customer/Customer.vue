@@ -6,7 +6,7 @@
       <BreadcrumbItem>{{breadName}}</BreadcrumbItem>
     </Breadcrumb>
 
-    <Tabs type="card" @on-click="tabsChange">
+    <Tabs type="card" @on-click="tabsChange" :value="index">
       <TabPane :label="labelList[0]">
         <CustomerList></CustomerList>
       </TabPane>
@@ -51,6 +51,16 @@ export default {
     return {
       labelList: ['真实用户', '虚拟用户'],
       breadName: '真实用户',
+      index:0
+    }
+  },
+  created(){
+    const { params, query } = this.$route;
+    console.log(params.tab);
+    if (params.tab === 0 || query.tab == 0) {
+      this.index = 0;
+    } else if (params.tab === 1 || query.tab == 1) {
+      this.index = 1;
     }
   },
   mounted() { },

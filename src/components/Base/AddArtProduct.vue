@@ -8,6 +8,9 @@
             <BreadcrumbItem>新增艺术品</BreadcrumbItem>
         </Breadcrumb>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="150" :inline="true">
+             <FormItem label="问题" prop="question" class="formItem100">
+                <Input v-model="formValidate.proQuestion" placeholder="输入作品问题" clearable :maxlength="30" />
+            </FormItem>
             <FormItem label="艺术品名称" prop="name" class="formItem100">
                 <Input v-model="formValidate.name" placeholder="输入艺术品名称" clearable :maxlength="30" />
             </FormItem>
@@ -53,7 +56,7 @@
                 <Input v-model="formValidate.collectPlace" placeholder="搜索并添加收藏地点" clearable :maxlength="30" />
             </FormItem>
             <FormItem label="相关视频" class="formItem100">
-                <EyUpload @upload-ok="getVideoImgUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize" imgSizeText="封面图片规格：高422px,宽750px，不超过100K" :maxSize="100" accept="image/jpeg,image/jpg,image/png"/>
+                <EyUpload @upload-ok="getVideoImgUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize" imgSizeText="封面图片规格：高422px,宽750px"  accept="image/jpeg,image/jpg,image/png"/>
                 <p v-show="isVideoUploadOk">
                     <span class="headImg">
                         <Icon type="close-circled" size="18" class="closeIcon" @click.native="resetImg('videoImage')"></Icon>
@@ -75,7 +78,7 @@
                   <Tag v-for="(tag,index) in proTags" type="border" closable @on-close="deleteproTag(index)" :key="tag">{{tag}}</Tag>
                 </div>
             </FormItem>
-            <FormItem label="作品影响区域" class="formItem45">
+            <!-- <FormItem label="作品影响区域" class="formItem45">
                 <Input v-model="formValidate.influenceRegion" placeholder="影响区域" clearable :maxlength="20" />
             </FormItem>
             <FormItem label="作品喜好人群" class="formItem45">
@@ -83,7 +86,7 @@
             </FormItem>
             <FormItem label="作品历史状态" class="formItem45">
                 <Input v-model="formValidate.historyState" placeholder="作品历史状态" clearable :maxlength="20" />
-            </FormItem>
+            </FormItem> -->
             <FormItem label="发布状态" prop="status" class="formItem100">
                 <RadioGroup v-model="formValidate.status" v-for="(item,index) in releaseStatus" :key="index">
                     <Radio :label="item.value">{{item.name}}</Radio>
@@ -128,6 +131,7 @@ export default {
             proTags:[],
             formValidate: {
                 id: 0,
+                proQuestion:'',
                 name: '',
                 imageUrl: '',
                 litimg: '',
@@ -142,9 +146,9 @@ export default {
                 status: 1,
                 proTag: '',
                 voiceUrl:'',
-                influenceRegion: '',
-                preferGroup: '',
-                historyState: '',
+                // influenceRegion: '',
+                // preferGroup: '',
+                // historyState: '',
                 proDescription: ''
             },
             ruleValidate: {
@@ -332,14 +336,16 @@ export default {
                     // 提交前将富文本图片上传至七牛云
                     // this.formValidate.proDescription
                     this.formValidate.proTag = this.proTags.toString();
+
+                    console.log('详情页传递数据',this.formValidate);
                     const { code, msg } = await setProduct({
                         productInfo: JSON.stringify(this.formValidate)
                     })
                     if (code === 10000 || code === '10000') {
                         this.$Message.success(msg);
                         setTimeout(() => {
-                            this.goBack('1')
-                        }, 1500)
+                            this.$router.push({path:"/Base?tab=1"})
+                        }, 1000)
                     } else {
                         this.$Message.error(msg);
                     }

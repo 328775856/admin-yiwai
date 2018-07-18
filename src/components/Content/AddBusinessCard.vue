@@ -9,7 +9,7 @@
                 <Input v-model="formValidate.goodsName" placeholder=" 输入商品名称，20个汉字以内" clearable :maxlength="20" />
             </FormItem>
             <FormItem label="商品图片" prop="image" class="formItem100">
-                <EyUpload @upload-ok="getImageUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize" imgSizeText="图片规格：高400px、宽325px，不超过100K" :maxSize="100" accept="image/jpeg,image/jpg,image/png"/>
+                <EyUpload @upload-ok="getImageUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize" imgSizeText="图片规格：高400px、宽325px" accept="image/jpeg,image/jpg,image/png"/>
                 <p v-show="isUploadOk">
                     <span class="headImg">
                         <Icon type="close-circled" size="18" class="closeIcon" @click.native="resetImg"></Icon>
@@ -118,8 +118,8 @@ export default {
                     if (code === 10000 || code === '10000') {
                         this.$Message.success(msg);
                         setTimeout(() => {
-                            this.goBack()
-                        }, 1500)
+                            this.$router.push({name:"Content",params:{tab:1}})
+                        }, 1000)
                     } else {
                         this.$Message.error(msg);
                     }

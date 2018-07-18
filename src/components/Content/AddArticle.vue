@@ -11,7 +11,7 @@
                 <Input v-model="formValidate.title" placeholder=" 输入文章标题" clearable :maxlength="30" style="width:30%;" />
             </FormItem>
             <Form-item label="封面" prop="cover">
-                <EyUpload @upload-ok="getLitImgUrl" @upload-error="uploadError"  @upload-exceeded-size="uploadExceededSize" accept="image/gif,image/jpeg,image/jpg,image/png"/>
+                <EyUpload @upload-ok="getLitImgUrl" @upload-error="uploadError"  @upload-exceeded-size="uploadExceededSize" imgSizeText="封面尺寸：657px X 247px"  accept="image/gif,image/jpeg,image/jpg,image/png"/>
                 <p v-show="isLitUploadOk">
                     <div class="imgWrp mt20" v-show="formValidate.cover">
                         <img  :src="formValidate.cover+'?imageView2/1/w/135/h/165/q/50'"  class="img headImg">
@@ -56,7 +56,8 @@
 <script>
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormItem, Input, Select, Option, DatePicker,Icon } from 'iview';
 import EyQuill from '../Common/EyQuill/EyQuill';
-import EyEditor from '../Common/EyEditor/EyEditor'
+
+// import EyEditor from '../Common/EyEditor/EyEditor'
 import { getDictionaryList } from 'libs/js/api.js';
 import { setArticle } from './Content.service';
 import util from 'libs/js/util.js';
@@ -64,7 +65,8 @@ import EyUpload from '../Common/EyUpload/EyUpload';
 
 export default {
     name: 'AddArticle',
-    components: { Breadcrumb, BreadcrumbItem, Button, Form, FormItem, Input, Select, Option, DatePicker ,EyQuill,EyUpload,Icon,EyEditor},
+    
+    components: { Breadcrumb, BreadcrumbItem, Button, Form, FormItem, Input, Select, Option, DatePicker ,EyQuill,EyUpload,Icon,EyEditor:() =>import (/* webpackChunkName: "EyEditor" */'@/components/Common/EyEditor/EyEditor')},
     data() {
         return {
             isUploadOk:false,
@@ -159,7 +161,7 @@ export default {
                         this.$Message.success(msg);
                         setTimeout(() => {
                             this.goBack();
-                        }, 1500)
+                        }, 1000)
                     } else {
                         this.$Message.error(msg);
                     }

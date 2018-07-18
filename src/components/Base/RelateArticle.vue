@@ -96,19 +96,23 @@ export default {
             },
             {
               title: '编号',
-              key: 'articleId'
+              key: 'articleId',
+              align:'center'
             },
             {
               title: '文章标题',
-              key: 'articleTitle'
+              key: 'articleTitle',
+              align:'center'
             },
             {
               title: '创建时间',
-              key: 'gmtCreate'
+              key: 'gmtCreate',
+              align:'center'
             },
             {
               title: '操作',
               key: 'action',
+              align:'center',
               render:(h,params) =>{
                 const data = params.row;
                 const {id} = params.row;

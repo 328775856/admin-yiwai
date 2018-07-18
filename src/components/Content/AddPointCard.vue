@@ -87,8 +87,8 @@ export default {
                     if (code === 10000 || code === '10000') {
                         this.$Message.success(msg);
                         setTimeout(() => {
-                            this.goBack()
-                        }, 1500)
+                            this.$router.push({name:"Content",params:{tab:1}})
+                        }, 1000)
                     } else {
                         this.$Message.error(msg);
                     }

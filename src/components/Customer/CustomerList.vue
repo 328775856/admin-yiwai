@@ -16,23 +16,45 @@
     <Table class="mt10" border :loading="loading" :columns="columns" :data="data" @on-sort-change="onSortChange"></Table>
     <Page class="paging tr mt10" :current="pageNo" :total="totalItems" show-total show-elevator :page-size-opts="[10,20,30]" placement="top" @on-change="onChage" @on-page-size-change="onPageSizeChange"></Page>
     <SetCustomer :pIsShowModel="pIsShowModel" :pIsAdd="pIsAdd" :pIsLook="pIsLook" :pCustomerInfo="pCustomerInfo" @updatepCustomerInfo="()=>pCustomerInfo={}" @updatepIsShowModel="val=>pIsShowModel=val"></SetCustomer>
+    <Modal
+      title="设置认证"
+      @on-ok="ok"
+      @on-cancel="cancel"
+      v-model="modal1">
+      <div>
+        认证类型：
+        <RadioGroup v-model="customerType">
+          <Radio label="艺术家"></Radio>
+          <Radio label="机构"></Radio>
+        </RadioGroup>
+      </div>
+      <div class="flex-row">
+        <div>选择{{customerType}}：</div>
+        <EySelectsearch v-show="customerType == '机构'" ref="eySelectsearch" url="/getOrganList/v1" name="name" resultList="data" :postData="{searchInfo: {  name: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['id','name']" placeHolder="请选择" @getItem="getItem">
+        </EySelectsearch>
+        <EySelectsearch  v-show="customerType == '艺术家'" ref="eySelectsearch" url="/getArtistStatisticsList/v1" name="artistName" resultList="artistList" :postData="{searchInfo: { artistName: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['artistId','artistDto.name']" placeHolder="请选择" @getItem="getItem">
+        </EySelectsearch>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { Table, Page, Button, Input } from "iview";
+import { Table, Page, Button, Input, Modal, Radio, RadioGroup } from "iview";
 import SetCustomer from './SetCustomer.vue'
+import EySelectsearch from '../Common/EySelectsearch.vue'
 
 import {
   getCustomerList,
   getCustomerInfo,
   setCustomer,
   setVip,
-  deleteCustomer
+  deleteCustomer,
+  setCustomerType
 } from "./Customer.service";
 export default {
   name: "CustomerList",
-  components: { Table, Page, Button, Input, SetCustomer },
+  components: { Table, Page, Button, Input, SetCustomer,Modal, Radio, RadioGroup, EySelectsearch },
   props: {
     isVirtual: {
       type: Number,
@@ -53,6 +75,10 @@ export default {
       totalItems: 0,
       pIsShowModel: false,
       loading: true,
+      modal1: false,
+      customerType: '艺术家',
+      customerTypeList: ['个人', '艺术家', '机构'],
+      rowData: null,
       columns: [
         {
           title: "编号",
@@ -132,14 +158,27 @@ export default {
               </div>
             );
           }
-
-
         },
         {
           title: "收藏作品数",
           key: "collectNum",
           sortable: 'custom',
           align: 'center'
+        },
+        {
+          title: "认证类型",
+          key: "",
+          align: 'center',
+          render: (h, params) => {
+            const { customerDto, commentNum } = params.row;
+            console.log(params.row,'234')
+            return (
+              <div>
+              <p>{this.customerTypeList[customerDto.type-1]}</p>
+              <p class="edit">{}</p>
+              </div>
+          );
+          }
         },
         {
           title: "操作",
@@ -154,6 +193,7 @@ export default {
             return (
               <div class="operateWrp">
                 <p><span class="edit" onClick={() => this.selectCustomer(row)}>查看</span></p>
+                <p><span class="edit" onClick={() => this._customerType(row)}>设置认证</span></p>
                 {isOperate()}
               </div>
             );
@@ -276,6 +316,31 @@ export default {
         this.sort = (order + '').toUpperCase();
       }
       this.getCustomerList();
+    },
+    _customerType(row){
+      this.modal1 = true;
+      this.rowData = row;
+      console.log(this.rowData)
+    },
+    getItem(item) {
+      console.log(item);
+      this.customerId = item.key;
+      this.replyInfo.nickName = item.value;
+    },
+    ok () {
+      this.$Message.info('ok');
+      const postData = {
+        bindId:this.rowData.id,
+        customerId: this.rowData.customerId,
+        type: this.rowData.customerDto.type
+      };
+      setCustomerType(postData).then((res)=>{
+        console.log(res)
+      })
+
+    },
+    cancel () {
+      this.$Message.info('cancel');
     }
   }
 };
@@ -308,4 +373,18 @@ export default {
     line-height: 1.8em;
   }
 }
+</style>
+<style scoped>
+  .flex-row{
+    display: flex;
+    flex-direction: row;
+    padding-top: 30px;
+    align-items: center;
+  }
+  .flex-row>div:first-child{
+    width:72px;
+  }
+  .ivu-radio-group{
+    padding-left: 10px;
+  }
 </style>

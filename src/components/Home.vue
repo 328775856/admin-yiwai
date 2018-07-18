@@ -10,7 +10,7 @@
           <div class="logoWrp cell">
             <router-link to="/">
               <span style="margin-left:20px;" class="">意外艺术管理后台
-                <span class="versions">v2.1</span>
+                <span class="versions">{{versions}}</span>
               </span>
               <img class="betaImg" src="../assets/imgs/beta.png" alt="">
             </router-link>
@@ -31,7 +31,7 @@
     <Layout :style="!isNativeOvh?{position: 'absolute', top: '64px',bottom:'0',left:0,right:0}:{}">
       <!--<Sider collapsible :collapsed-width="78" v-model="isCollapsed">-->
       <Sider>
-        <Menu :active-name="active" theme="dark" width="auto" :open-names="['2']" @on-select="onSelect">
+        <Menu :active-name="active" theme="dark" width="auto" :open-names="['1']" @on-select="onSelect">
           <MenuItem name="1-1">
           <Icon type="document"></Icon>
           <span>首页</span>
@@ -49,7 +49,7 @@
 
           <MenuItem name="1-4">
           <Icon type="edit"></Icon>
-          <span>页面发布</span>
+          <span>首页管理</span>
           </MenuItem>
 
           <MenuItem name="1-5">
@@ -72,7 +72,7 @@
           <span>系统设置</span>
           </MenuItem>
 
-          <Submenu name="2">
+          <!-- <Submenu name="2">
             <template slot="title">
               <Icon type="ios-location"></Icon>
               艺术地图
@@ -82,25 +82,15 @@
             <MenuItem name="2-3">三级人物管理</MenuItem>
             <MenuItem name="2-4">四级作品管理</MenuItem>
           </Submenu>
-          <!-- <MenuGroup title="艺术地图">
-            <MenuItem name="2-1">
-            <Icon type="document-text"></Icon>
-            一级城市管理
-            </MenuItem>
-            <MenuItem name="2-2">
-            <Icon type="chatbubbles"></Icon>
-            二级画派管理
-            </MenuItem>
-            <MenuItem name="2-3">
-            <Icon type="chatbubbles"></Icon>
-            三级人物管理
-            </MenuItem>
-            <MenuItem name="2-4">
-            <Icon type="chatbubbles"></Icon>
-            四级作品管理
-            </MenuItem>
-          </MenuGroup> -->
 
+          <Submenu name="3">
+            <template slot="title">
+              <Icon type="ios-location"></Icon>
+              家乡博物馆
+            </template>
+            <MenuItem name="3-1">家乡文物管理</MenuItem>
+            <MenuItem name="3-2">合作品牌管理</MenuItem>
+          </Submenu> -->
         </Menu>
       </Sider>
 
@@ -129,12 +119,16 @@ import {
   MenuItem,
   Icon,
   Footer,
-  Submenu
-} from 'iview';
+  Submenu,
+  Content
+} from 'iview'
+import util from 'libs/js/util.js'
+
 export default {
   name: 'Home',
   data() {
     return {
+      versions: util.versions(),
       routerObj: {
         '1-1': '/Index',
         '1-2': '/Base',
@@ -150,11 +144,12 @@ export default {
         '2-3': '/Base?tab=0',
         '2-4': '/Base?tab=1',
 
+        // 博物馆
+        '3-1': '/Culture',
+        '3-2': '/Brand'
       },
-       haveEyEditorRoute: [
-        '/AddArticle',
-      ],
-       isNativeOvh: false,
+      haveEyEditorRoute: ['/AddArticle', '/AddCultureDetail'],
+      isNativeOvh: false,
       userName: '',
       active: '',
       isCollapsed: false
@@ -162,68 +157,65 @@ export default {
   },
 
   mounted() {
-    this.userName = sessionStorage.getItem('userName');
-            this.isHaveEyEditor();
-    this.activeMenu();
+    this.userName = sessionStorage.getItem('userName')
+    this.isHaveEyEditor()
+    this.activeMenu()
   },
   watch: {
-    '$route'(newValue, oldValue) {
-            this.isHaveEyEditor();
-      this.activeMenu();
+    $route(newValue, oldValue) {
+      this.isHaveEyEditor()
+      this.activeMenu()
     }
   },
   methods: {
     isHaveEyEditor() {
-      this.isNativeOvh = false;
-      const { fullPath } = this.$route;
-      const { haveEyEditorRoute } = this;
+      this.isNativeOvh = false
+      const { fullPath } = this.$route
+      const { haveEyEditorRoute } = this
       for (let i = 0, len = haveEyEditorRoute.length; i < len; i++) {
         if (fullPath.indexOf(haveEyEditorRoute[i]) != -1) {
-          this.isNativeOvh = true;
-          break;
+          this.isNativeOvh = true
+          break
         }
       }
     },
     activeMenu() {
-      const { fullPath } = this.$route;
-      console.log(fullPath, 'fullPath');
-      const routerObj = this.routerObj;
+      const { fullPath } = this.$route
+      console.log(fullPath, 'fullPath')
+      const routerObj = this.routerObj
 
-
-
-      let flag = false;
+      let flag = false
       for (let o in routerObj) {
         if (fullPath == '/Base?tab=0') {
-          flag = true;
-          this.active = '2-3';
-          console.log(this.active, 'active');
-          break;
+          flag = true
+          this.active = '2-3'
+          console.log(this.active, 'active')
+          break
         }
         if (fullPath == '/Base?tab=1') {
-          flag = true;
-          this.active = '2-4';
-          console.log(this.active, 'active');
-          break;
+          flag = true
+          this.active = '2-4'
+          console.log(this.active, 'active')
+          break
         }
 
         if (fullPath.indexOf(routerObj[o]) != -1) {
-          flag = true;
-          this.active = o;
-          break;
+          flag = true
+          this.active = o
+          break
         }
       }
       if (!flag) {
-        this.active = '';
+        this.active = ''
       }
-
     },
     onSelect(name) {
-      const path = this.routerObj[name] || '/Index';
-      this.$router.push({ path });
+      const path = this.routerObj[name] || '/Index'
+      this.$router.push({ path })
     },
     signOut() {
-      sessionStorage.clear();
-      this.$router.push({ path: '/Login' });
+      sessionStorage.clear()
+      this.$router.push({ path: '/Login' })
     }
   },
   components: {
@@ -234,13 +226,14 @@ export default {
     MenuItem,
     Icon,
     Footer,
-    Submenu
+    Submenu,
+    Content
   }
 }
 </script>
 
 <style lang="less">
-@import "../libs/css/common.less";
+@import '../libs/css/common.less';
 .ivu-layout-sider {
   overflow: auto !important;
 }

@@ -76,14 +76,37 @@
 </template>
 
 <script>
-import { Breadcrumb, BreadcrumbItem, Tabs, TabPane, Button, Table, Page, Select, Option, Input } from 'iview';
-import EyFilter  from '../Common/EyFilter/EyFilter'
-import { getProductStatisticsList } from 'libs/js/api.js';
-import { getArtistStatisticsList, deleteArtist } from './Base.service.js';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Tabs,
+  TabPane,
+  Button,
+  Table,
+  Page,
+  Select,
+  Option,
+  Input
+} from 'iview'
+import EyFilter from '../Common/EyFilter/EyFilter'
+import { getProductStatisticsList } from 'libs/js/api.js'
+import { getArtistStatisticsList, deleteArtist } from './Base.service.js'
 
 export default {
   name: 'Base',
-  components: { Breadcrumb, BreadcrumbItem, Tabs, TabPane, Button, Table, Page, Select, Option, Input,EyFilter },
+  components: {
+    Breadcrumb,
+    BreadcrumbItem,
+    Tabs,
+    TabPane,
+    Button,
+    Table,
+    Page,
+    Select,
+    Option,
+    Input,
+    EyFilter
+  },
   data() {
     return {
       loading1: true,
@@ -92,19 +115,23 @@ export default {
       isAdd: false,
       index: 0,
       artName: '',
-      apageSize:10,
-      apageNo:0,
-      pPageNo:0,
-      pPageSize:10,
-      psortField:'',
-      sortField:'',
+      apageSize: 10,
+      apageNo: 0,
+      pPageNo: 0,
+      pPageSize: 10,
+      psortField: '',
+      sortField: '',
       artistName: '',
       artProductName: '',
       currentPageNoProduct: 1,
       currentPageNoArt: 1,
       releaseStatus: 2,
-      region:'',
-      statusList: [{ value: 2, name: '全部状态' }, { value: 1, name: '已发布' }, { value: 0, name: '未发布' }],
+      region: '',
+      statusList: [
+        { value: 2, name: '全部状态' },
+        { value: 1, name: '已发布' },
+        { value: 0, name: '未发布' }
+      ],
       artPeoplecolumns: [
         {
           title: '编号',
@@ -112,10 +139,8 @@ export default {
           width: 70,
           align: 'center',
           render(h, params) {
-            const {id} = params.row.artistDto;
-            return (
-              <div>{id}</div>
-            )
+            const { id } = params.row.artistDto
+            return <div>{id}</div>
           }
         },
         {
@@ -123,10 +148,8 @@ export default {
           key: 'name',
           align: 'center',
           render(h, params) {
-            const {name} = params.row.artistDto;
-            return (
-              <div>{name}</div>
-            )
+            const { name } = params.row.artistDto
+            return <div>{name}</div>
           }
         },
         {
@@ -135,9 +158,12 @@ export default {
           align: 'center',
           width: 100,
           render(h, params) {
-            var {imageUrl} = params.row.artistDto;
+            var { imageUrl } = params.row.artistDto
             return (
-              <div class="headImg" style={`background:url(${imageUrl}?imageView2/1/w/60/h/60/q/50) no-repeat center;background-size: contain;`}></div>
+              <div
+                class="headImg"
+                style={`background:url(${imageUrl}?imageView2/1/w/60/h/60/q/50) no-repeat center;background-size: contain;`}
+              />
               // <img src={imageUrl} class="headImg" />
             )
           }
@@ -148,10 +174,8 @@ export default {
           key: 'nationality',
           align: 'center',
           render(h, params) {
-            const {nationality} = params.row.artistDto;
-            return (
-              <div>{nationality}</div>
-            )
+            const { nationality } = params.row.artistDto
+            return <div>{nationality}</div>
           }
         },
         {
@@ -159,22 +183,32 @@ export default {
           width: 100,
           key: 'readNum',
           align: 'center',
-          sortable:true,
-          sortType:'desc'
+          sortable: true,
+          sortType: ''
         },
         {
           title: '评论数',
           width: 100,
           key: 'commentNum',
           align: 'center',
-          sortable:true,
-          sortType:'desc',
-          render:(h,params) => {
-            const {artistId,commentNum} = params.row;
+          sortable: true,
+          sortType: '',
+          render: (h, params) => {
+            const { artistId, commentNum } = params.row
             return (
               <div>
-              <p>{commentNum}</p>
-              <a href="javascript:void(0)" onClick={()=>this.$router.push({path:"/Comment?tab=1",query:{artistId:artistId}})}>查看评论</a>
+                <p>{commentNum}</p>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() =>
+                    this.$router.push({
+                      path: '/Comment?tab=1',
+                      query: { artistId: artistId }
+                    })
+                  }
+                >
+                  查看评论
+                </a>
               </div>
             )
           }
@@ -184,19 +218,24 @@ export default {
           width: 100,
           key: 'productNum',
           align: 'center',
-          sortable:true,
-          sortType:'desc',
-          render:(h,params) => {
-            const {name} = params.row.artistDto;
-            const {productNum} = params.row;
+          sortable: true,
+          sortType: '',
+          render: (h, params) => {
+            const { name } = params.row.artistDto
+            const { productNum } = params.row
             return (
               <div>
                 <p>{productNum}</p>
-                <a href="javascript:void(0)" onClick={()=>{
-                this.index =1;
-                this.artistName = name;
-                this.getProductStatisticsList();
-              }}>查看作品</a>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => {
+                    this.index = 1
+                    this.artistName = name
+                    this.getProductStatisticsList()
+                  }}
+                >
+                  查看作品
+                </a>
               </div>
             )
           }
@@ -220,10 +259,8 @@ export default {
           key: 'gmtCreate',
           align: 'center',
           render(h, params) {
-            const {gmtCreate} = params.row.artistDto;
-            return (
-              <div>{gmtCreate}</div>
-            )
+            const { gmtCreate } = params.row.artistDto
+            return <div>{gmtCreate}</div>
           }
         },
         {
@@ -231,16 +268,65 @@ export default {
           key: 'operate',
           align: 'center',
           render: (h, params) => {
-            const data = params.row;
-            const {artistId} = params.row;
+            const data = params.row
+            const { artistId } = params.row
             return (
               <div>
-                <span onClick={() => this.$router.push({ name: 'AddArt', params: { data } })} class="edit">编辑</span>
-                <span class="edit" onClick={()=>this.deleteArtist(artistId)}>删除</span>
-                <div style="color:blue; cursor:pointer;"  onClick={()=>this.$router.push({path:"/Person",query:{artistId:artistId}})}>代表作品管理</div>
-                <div style="color:blue; cursor:pointer;"  onClick={()=>this.$router.push({path:"/Base/RelateArtist",query:{artistId:artistId}})}>关联艺术家管理</div>
-                <div style="color:blue; cursor:pointer;"  onClick={()=>this.$router.push({path:"/Base/RelateProduct",query:{artistId:artistId}})}>相关商品管理</div>
-                <div style="color:blue; cursor:pointer;"  onClick={()=>this.$router.push({path:"/Base/RelateArticle",query:{artistId:artistId}})}>相关文章管理</div>
+                <span
+                  onClick={() =>
+                    this.$router.push({ name: 'AddArt', params: { data } })
+                  }
+                  class="edit"
+                >
+                  编辑
+                </span>
+                <span class="edit" onClick={() => this.deleteArtist(artistId)}>
+                  删除
+                </span>
+                <div
+                  style="color:blue; cursor:pointer;"
+                  onClick={() =>
+                    this.$router.push({
+                      path: '/Person',
+                      query: { artistId: artistId }
+                    })
+                  }
+                >
+                  代表作品管理
+                </div>
+                <div
+                  style="color:blue; cursor:pointer;"
+                  onClick={() =>
+                    this.$router.push({
+                      path: '/Base/RelateArtist',
+                      query: { artistId: artistId }
+                    })
+                  }
+                >
+                  关联艺术家管理
+                </div>
+                <div
+                  style="color:blue; cursor:pointer;"
+                  onClick={() =>
+                    this.$router.push({
+                      path: '/Base/RelateProduct',
+                      query: { artistId: artistId }
+                    })
+                  }
+                >
+                  相关商品管理
+                </div>
+                <div
+                  style="color:blue; cursor:pointer;"
+                  onClick={() =>
+                    this.$router.push({
+                      path: '/Base/RelateArticle',
+                      query: { artistId: artistId }
+                    })
+                  }
+                >
+                  相关文章管理
+                </div>
               </div>
             )
           }
@@ -254,22 +340,18 @@ export default {
           align: 'center',
           width: 70,
           render(h, params) {
-            const { id } = params.row.productDto;
-            return (
-              <div>{id}</div>
-            )
+            const { id } = params.row.productDto
+            return <div>{id}</div>
           }
         },
         {
           title: '艺术品名称',
           key: 'name',
           align: 'center',
-          width:150,
+          width: 150,
           render(h, params) {
-            const { name } = params.row.productDto;
-            return (
-              <div>{name}</div>
-            )
+            const { name } = params.row.productDto
+            return <div>{name}</div>
           }
         },
         {
@@ -277,9 +359,12 @@ export default {
           align: 'center',
           key: 'imageUrl',
           render(h, params) {
-            const { imageUrl } = params.row.productDto;
+            const { imageUrl } = params.row.productDto
             return (
-              <div class="headImg" style={`background:url(${imageUrl}?imageView2/1/w/175/h/100/q/50) no-repeat center;background-size: contain;`}></div>
+              <div
+                class="headImg"
+                style={`background:url(${imageUrl}?imageView2/1/w/175/h/100/q/50) no-repeat center;background-size: contain;`}
+              />
             )
           }
         },
@@ -288,10 +373,8 @@ export default {
           align: 'center',
           key: 'artistName',
           render(h, params) {
-            const { artistName } = params.row.productDto;
-            return (
-              <div>{artistName}</div>
-            )
+            const { artistName } = params.row.productDto
+            return <div>{artistName}</div>
           }
         },
         // {
@@ -310,24 +393,24 @@ export default {
           align: 'center',
           key: 'collectNum',
           width: 80,
-          sortable:true,
-          sortType:'desc'
+          sortable: true,
+          sortType: ''
         },
         {
           title: '评论数',
           align: 'center',
           key: 'commentNum',
           width: 80,
-          sortable:true,
-          sortType:'desc'
+          sortable: true,
+          sortType: ''
         },
         {
           title: '浏览量',
           align: 'center',
           key: 'readNum',
           width: 80,
-          sortable:true,
-          sortType:'desc'
+          sortable: true,
+          sortType: ''
         },
         {
           title: '状态',
@@ -335,10 +418,8 @@ export default {
           key: 'status',
           width: 80,
           render(h, params) {
-            const { status } = params.row.productDto;
-            return (
-              <div>{status == 0 ? '未发布' : '已发布'}</div>
-            )
+            const { status } = params.row.productDto
+            return <div>{status == 0 ? '未发布' : '已发布'}</div>
           }
         },
         {
@@ -347,10 +428,8 @@ export default {
           key: 'gmtCreate',
           width: 100,
           render(h, params) {
-            const { gmtCreate } = params.row.productDto;
-            return (
-              <div>{gmtCreate}</div>
-            )
+            const { gmtCreate } = params.row.productDto
+            return <div>{gmtCreate}</div>
           }
         },
         {
@@ -358,15 +437,40 @@ export default {
           align: 'center',
           key: 'operate',
           render: (h, params) => {
-            const data = params.row.productDto;
-            const productId = params.row.productId;
-            const { id } = params.row.productDto;
+            const data = params.row.productDto
+            const productId = params.row.productId
+            const { id } = params.row.productDto
             return (
               <div>
-                <span onClick={() => this.$router.push({ name: 'AddArtProduct', params: { data } })} class="edit">编辑</span>
-                <span class="edit" v-clipboard={`pages/Picture/Detail?id=${id}`} onSuccess={(e) => this.$Message.success('复制成功')}>复制链接</span>
-                <span class="edit" onClick={() => this.$router.push({ path: '/Comment', query: { productId } })}>查看评论</span>
-
+                <span
+                  onClick={() =>
+                    this.$router.push({
+                      name: 'AddArtProduct',
+                      params: { data }
+                    })
+                  }
+                  class="edit"
+                >
+                  编辑
+                </span>
+                <span
+                  class="edit"
+                  v-clipboard={`pages/Picture/Detail?id=${id}`}
+                  onSuccess={e => this.$Message.success('复制成功')}
+                >
+                  复制链接
+                </span>
+                <span
+                  class="edit"
+                  onClick={() =>
+                    this.$router.push({
+                      path: '/Comment',
+                      query: { productId }
+                    })
+                  }
+                >
+                  查看评论
+                </span>
               </div>
             )
           }
@@ -376,112 +480,112 @@ export default {
     }
   },
   created() {
-    const { params, query } = this.$route;
+    const { params, query } = this.$route
+    console.log(this.$route)
     if (params.tab === '0' || query.tab == 0) {
-      this.index = 0;
+      this.index = 0
     } else if (params.tab === '1' || query.tab == 1) {
-      this.index = 1;
-    } else if (params.tab === '2' || query.tab == 2) {
-      this.index = 2;
+      this.index = 1
+    } else if (params.tab === '2' || query.tab == 2 || query.tab == '2') {
+      this.index = 2
     }
-    if(params.artistName){
-      this.artName = params.artistName;
+    if (params.artistName) {
+      this.artName = params.artistName
     }
-    this.getArtistList();
+    this.getArtistList()
     if (params.productName) {
-      this.artProductName = params.productName;
+      this.artProductName = params.productName
     }
-    this.getProductStatisticsList();
+    this.getProductStatisticsList()
   },
   watch: {
-    '$route'(newValue, oldValue) {
-      const { params, query } = this.$route;
+    $route(newValue, oldValue) {
+      const { params, query } = this.$route
       if (params.tab === '0' || query.tab == 0) {
-        this.index = 0;
+        this.index = 0
       } else if (params.tab === '1' || query.tab == 1) {
-        this.index = 1;
+        this.index = 1
       } else if (params.tab === '2' || query.tab == 2) {
-        this.index = 2;
+        this.index = 2
       }
     }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     getName(name) {
-      this.index = name;
+      this.index = name
     },
-    getItem({key,value}){
-      this.apageNo =0;
-      this.currentPageNoArt = 1;
-      if(key){
-        this.region = key;
-      }else{
-        this.region ="";
+    getItem({ key, value }) {
+      this.apageNo = 0
+      this.currentPageNoArt = 1
+      if (key) {
+        this.region = key
+      } else {
+        this.region = ''
       }
-      this.getArtistList();
+      this.getArtistList()
     },
     add(name) {
-      this.$router.push({ name });
+      this.$router.push({ name })
     },
     search(sort) {
       if (sort === 'art') {
-        this.currentPageNoArt = 1;
-        this.getArtistList();
+        this.currentPageNoArt = 1
+        this.getArtistList()
       } else if (sort === 'artProduct') {
-        this.currentPageNoProduct = 1;
-        this.getProductStatisticsList();
+        this.currentPageNoProduct = 1
+        this.getProductStatisticsList()
       }
     },
     onChangeTab1(pageNo) {
-      this.apageNo = pageNo;
-      this.getArtistList();
+      this.apageNo = pageNo
+      this.getArtistList()
     },
     onChangeTab2(pageNo) {
-      this.pPageNo = pageNo;
+      this.pPageNo = pageNo
       this.getProductStatisticsList()
     },
     onPageSizeChangeTab1(pageSize) {
-      this.apageSize = pageSize;
-      this.getArtistList();
+      this.apageSize = pageSize
+      this.getArtistList()
     },
     onPageSizeChangeTab2(pageSize) {
-      this.pPageSize = pageSize;
+      this.pPageSize = pageSize
       this.getProductStatisticsList()
     },
     async getArtistList() {
-      const params ={
-        pageNo:this.apageNo,
-        pageSize:this.apageSize,
-        searchInfo:JSON.stringify({
-          artistName:this.artName,
-          region:this.region
+      const params = {
+        pageNo: this.apageNo,
+        pageSize: this.apageSize,
+        searchInfo: JSON.stringify({
+          artistName: this.artName,
+          region: this.region
         }),
-        sortField:this.sortField,
-        sort:''
+        sortField: this.sortField,
+        sort: ''
       }
       const { code, data } = await getArtistStatisticsList(params)
       if (code === 10000) {
-        this.artData = data;
-        this.loading1 = false;
+        this.artData = data
+        this.loading1 = false
       }
     },
     async getProductStatisticsList() {
-      const params ={
-        pageNo:this.pPageNo,
-        pageSize:this.pPageSize,
-        sortField:this.psortField,
-        sort:'DESC',
-        searchInfo:JSON.stringify({
-          artistName:this.artistName,
-          productName:this.artProductName,
-          status:this.releaseStatus === 2 ? '' : this.releaseStatus
+      const params = {
+        pageNo: this.pPageNo,
+        pageSize: this.pPageSize,
+        sortField: this.psortField,
+        sort: '',
+        searchInfo: JSON.stringify({
+          artistName: this.artistName,
+          productName: this.artProductName,
+          status: this.releaseStatus === 2 ? '' : this.releaseStatus
         })
       }
-      const { code, data } = await getProductStatisticsList(params);
+      const { code, data } = await getProductStatisticsList(params)
       if (code === 10000) {
-        this.artProductData = data;
-        this.loading2 = false;
+        this.artProductData = data
+        this.loading2 = false
       }
     },
     async deleteArtist(artistId) {
@@ -494,20 +598,19 @@ export default {
           })
           if (code === 10000 || code === '10000') {
             this.$Message.success(msg)
-            this.getArtistList({});
+            this.getArtistList({})
           } else if (code === 10001 || code === '10001') {
-            this.$Message.warning(msg);
+            this.$Message.warning(msg)
           }
         }
       })
     }
   }
-
 }
 </script>
 <style lang="less">
-@import "../../libs/css/constant.less";
-@import "../../libs/css/common.less";
+@import '../../libs/css/constant.less';
+@import '../../libs/css/common.less';
 
 #base {
   .tab {
@@ -516,7 +619,7 @@ export default {
       .headImg {
         height: 60px;
       }
-      .edit{
+      .edit {
         margin: 0;
       }
     }

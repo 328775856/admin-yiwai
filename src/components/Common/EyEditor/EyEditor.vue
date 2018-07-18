@@ -23,13 +23,13 @@
 -->
 
   <div class="eyEditor">
-    <div class="btnWrp">
+    <div class="btnWrp" :class="{'fixed':isButtonFixed}" :style="{top:top+'px'}">
       <!-- <Button type="primary" @click="insertImg('https://img.kanhua.yiwaiart.com/eyadmin/008d7cd3-8a70-48d5-8dc1-4c074feb6c0a.jpg')">插入图片</Button>
       <Button type="primary" @click="insertVideo('https://img.kanhua.yiwaiart.com/eyadmin/aa908a05-cba6-4f97-ba51-c679cc6fda02.mp4')">插入视频</Button> -->
 
       <EyUpload v-if="this.insertButtonObj['img']" @before-upload="beforeUpload_img" @upload-ok="uploadOk_img" @upload-error="uploadError_img"
         accept="image/jpeg,image/jpg,image/png" text="插入图片" />
-      <Button v-if="this.insertButtonObj['video']" type="ghost" icon="plus" @click="()=>this.isShowModel=true">插入视频</Button>
+      <Button v-if="this.insertButtonObj['video']" type="ghost" icon="plus" @click="()=>this.isShowModel=true" style="background:#fff!important;">插入视频</Button>
     </div>
     <div class="mt5" :id="id" type="text/plain" style="width:95%;height:500px;"></div>
 
@@ -146,16 +146,25 @@
             trigger: 'blur'
           }]
         },
+        isButtonFixed: false,
+        top: 31,
       };
     },
     watch: {
       ue(ue) {
         ue.addListener('ready', () => {
+          console.log('i am ready');
           const {
             content
           } = this;
           if (content != '')
             ue.setContent(this.regReplace(content, 2));
+
+          this.getTop();
+          window.onresize = () => {
+            console.log('onresize~~~');
+            this.getTop();
+          };
         });
       },
       isShowModel(newValue) {
@@ -181,9 +190,37 @@
         BaseUrl: '',
         UEDITOR_HOME_URL: 'static/utf8-jsp/',
         toolbars: this.toolbars
-      })
+      });
+
+      this.buttonFixed();
     },
     methods: {
+      buttonFixed() {
+        const getElementTop = element => {
+          let actualTop = element.offsetTop;
+          let current = element.offsetParent;
+          while (current != null) {
+            actualTop += current.offsetTop + current.clientTop;
+            current = current.offsetParent;
+          }
+          return actualTop;
+        };
+        document.onscroll = () => {
+          const st = document.documentElement.scrollTop;
+          // 37为按钮的高度和编辑器距离按钮的外边距
+          if (st > getElementTop(document.getElementById(this.id)) - 37)
+            this.isButtonFixed = true;
+          else
+            this.isButtonFixed = false;
+        };
+
+      },
+      getTop() {
+        // console.log(document.getElementById('editor1').children[0].children[0]
+        //   .offsetHeight || 31,'top');
+        this.top = document.getElementById('editor1').children[0].children[0]
+          .offsetHeight || 31;
+      },
       beforeUpload_img() {
         this.beforeUploadUI();
       },
@@ -260,7 +297,7 @@
         } else if (mode == 2) {
           s = str.replace(/max-width:100%/g, 'max-width:80%');
         }
-        console.log(s,'富文本内容');
+        console.log(s, '富文本内容');
         return s;
       },
       handleSubmit(name) {
@@ -278,6 +315,8 @@
     },
     destroyed() {
       this.ue && this.ue.destroy();
+      window.onresize=null;
+      document.onscroll=null;
     }
   };
 
@@ -316,6 +355,16 @@
       }
     }
     .btnWrp {
+      &.fixed {
+        position: fixed;
+        top: 31px;
+        z-index: 1000;
+        background: #fff;
+        padding: 5px 5px;
+        margin-left: 1px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
       .eyUpload {
         display: inline-block;
       }

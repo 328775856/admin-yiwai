@@ -1,11 +1,16 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import 'libs/js/fixIE10.js'
+import 'babel-polyfill';
 import Vue from 'vue';
 import App from './App';
 import router from './router';
 import { Message,Modal } from 'iview';//全局提示组件
-import 'iview/dist/styles/iview.css';
-import 'libs/css/my-theme/index.less';
+
+
+/* 全局css样式 要在App.vue引入 不然webpakc打包就不会自动添加前缀了*/
+// import 'iview/dist/styles/iview.css';
+// import 'libs/css/my-theme/index.less';
 import VueClipboards from 'vue-clipboards';
 Vue.use(VueClipboards);
 Vue.config.productionTip = false;

@@ -486,7 +486,7 @@ export default {
       this.index = 0
     } else if (params.tab === '1' || query.tab == 1) {
       this.index = 1
-    } else if (params.tab === '2' || query.tab == 2 || query.tab == '2') {
+    } else if (params.tab === '2' || query.tab == 2) {
       this.index = 2
     }
     if (params.artistName) {

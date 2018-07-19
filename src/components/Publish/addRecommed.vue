@@ -29,7 +29,7 @@
             <Input type="textarea" v-model="pictureForm.picturelead" placeholder="请输入内容" style="width:30%"  />
           </FormItem>
            <FormItem label="推荐时间" prop="picturepublishTime" class="formItem45">
-                <DatePicker :value="pictureForm.picturepublishTime" format="yyyy/MM/dd" type="date" placeholder="选择展期" style="width: 230px" ref="picturedata" @on-change="onPictureChange"></DatePicker>
+                <DatePicker :value="pictureForm.picturepublishTime" format="yyyy/MM/dd" type="date" placeholder="请选择推荐日期" style="width: 230px" ref="picturedata" @on-change="onPictureChange"></DatePicker>
             </FormItem>
       </Form>
       <div class="action">
@@ -59,7 +59,7 @@
             <Input type="textarea" v-model="exhibitionForm.exhibitionlead" style="width:30%" placeholder="请输入内容"  />
           </FormItem>
           <FormItem label="推荐时间" prop="exhibitionpublishTime" class="formItem45">
-              <DatePicker :value="exhibitionForm.exhibitionpublishTime" format="yyyy/MM/dd" type="date" placeholder="选择展期" style="width: 230px" ref="exhibitiondata" @on-change="onexhibitionChange"></DatePicker>
+              <DatePicker :value="exhibitionForm.exhibitionpublishTime" format="yyyy/MM/dd" type="date" placeholder="请选择推荐日期" style="width: 230px" ref="exhibitiondata" @on-change="onexhibitionChange"></DatePicker>
           </FormItem>
       </Form>
         <div class="action">
@@ -91,7 +91,7 @@
           </FormItem>
 
           <FormItem label="推荐时间" prop="shoppingpublishTime" class="formItem45">
-            <DatePicker :value="shoppingForm.shoppingpublishTime" format="yyyy/MM/dd" type="date" placeholder="选择展期" style="width: 230px" ref="shoppingdata" @on-change="onshoppingChange"></DatePicker>
+            <DatePicker :value="shoppingForm.shoppingpublishTime" format="yyyy/MM/dd" type="date" placeholder="请选择推荐日期" style="width: 230px" ref="shoppingdata" @on-change="onshoppingChange"></DatePicker>
           </FormItem>
       </Form>
             <div class="action">
@@ -222,7 +222,7 @@ export default {
         exhibitionpublishTime: [
           {
             required: true,
-            message: '请选择推荐日期',
+            message: '推荐日期不能为空',
             trigger: 'change'
           }
         ]

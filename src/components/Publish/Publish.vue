@@ -5,11 +5,12 @@
       <BreadcrumbItem>页面发布</BreadcrumbItem>
       <BreadcrumbItem>小程序首页</BreadcrumbItem>
     </Breadcrumb>
-    <Tabs type="card" @on-click="getName" class="tab">
+    <Tabs type="card" @click="getName" class="tab">
       <!-- tab-1 开始 -->
       <TabPane :label="labelList[0]">
         <div class="table">
           <Button type="primary" icon="plus" @click="add('AddRecommed')">新增推荐</Button>
+          <span style="color:red;">首页排序规则：先按推荐时间，在按序号从小到大</span>
           <div class="sort-wrap">
               <Form :label-width="80" inline>
                 <Form-item prop="newpublicId" label="名称:">
@@ -26,10 +27,10 @@
               <Button type="primary" style="margin-left:40px;"  @click="getHomePageList" >筛选</Button>
               <Button type="default" style="margin-left:40px;" @click="reset">清空筛选条件</Button>
           </div>
-          <Table  :columns="publishColumns" :loading="tablePublicLoading" :data="publicList" border></Table>
+          <Table :columns="publishColumns" :loading="tablePublicLoading" :data="publicList"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page class="paging tr mt10" :current.sync="currentPage" :total="totalItems" show-total show-elevator :page-size-opts="[10,20,30]" placement="top" @on-change="onChangeTab"></Page>
+              <Page class="paging tr mt10" :current.sync="currentPage" :total="totalItems" show-total show-elevator placement="top" @on-change="onChangeTab"></Page>
             </div>
           </div>
         </div>
@@ -41,7 +42,6 @@
 
 <script>
 import util from 'libs/js/util.js'
-import EyUpload from '../Common/EyUpload/EyUpload'
 import { getHomePageList, setHomePage, deleteHomePage } from './Publish.service'
 import {
   Breadcrumb,
@@ -50,9 +50,6 @@ import {
   TabPane,
   Button,
   Input,
-  Row,
-  Col,
-  Modal,
   Form,
   Option,
   FormItem,
@@ -73,15 +70,12 @@ export default {
     TabPane,
     Button,
     Input,
-    Row,
-    Col,
     Icon,
     Select,
     Form,
     FormItem,
     Table,
     Option,
-    EyUpload,
     Page,
     Poptip,
     InputNumber
@@ -94,7 +88,7 @@ export default {
       sortPlaceholder: '请选择排序值',
       publicList: [],
       isLitUploadOk: false,
-      tablePublicLoading: false,
+      tablePublicLoading: true,
       pageNo: 1,
       pageSize: 10,
       newCustomerId: '',
@@ -116,17 +110,19 @@ export default {
         },
         {
           title: '名称/图片',
-          key: 'productDto',
+          key: '',
           align: 'center',
           render(h, params) {
             let { name, imageUrl } = params.row
             return (
-              <div>
+              <div class="flexCenter">
                 <span
                   class="headImg"
                   style={`background:url(${imageUrl}?imageView2/1/w/175/h/100/q/50) no-repeat center;background-size: contain;`}
                 />
-                <span class="edit">{name}</span>
+                <span style="color:#333;" class="edit">
+                  {name}
+                </span>
               </div>
             )
           }
@@ -155,71 +151,69 @@ export default {
         },
         {
           title: '序号',
-          key: 'sortNo',
+          key: 'sortNum',
           align: 'center',
           render(h, params) {
             let { id, sortNum } = params.row
             let oldValue = parseInt(sortNum)
             return (
-              // <Poptip placement="right" v-model="visible">
-              //   <a>
-              //     {sortNum} <Icon type="ios-compose-outline" />
-              //   </a>
-              //   <div class="" slot="content">
-              //     <input
-              //       class="input"
-              //       min="1"
-              //       type="number"
-              //       value={sortNum}
-              //       onInput={e => {
-              //         sortNum = parseInt(e.target.value)
-              //       }}
-              //     />
-              //     <span
-              //       class="input-save"
-              //       onClick={e => {
-              //         console.log(params.row)
-              //         let postData = params.row
-              //         delete postData._index
-              //         delete postData.gmtModified
-              //         delete postData._rowKey
-              //         postData.sortNum = sortNum
-              //         _this.setsortNum(postData)
-              //       }}
-              //     >
-              //       保存
-              //     </span>／
-              //     <span
-              //       class="input-cancel"
-              //       onClick={e => {
-              //         _this.visible = false
-              //       }}
-              //     >
-              //       取消
-              //     </span>
-              //   </div>
-              // </Poptip>
-              <div>
-                <input
-                  class="input"
-                  min="1"
-                  type="number"
-                  value={sortNum}
-                  onInput={e => {
-                    sortNum = parseInt(e.target.value)
-                  }}
-                  onKeydown={e => {
-                    if (e.keyCode == '13' && oldValue != sortNum) {
-                      console.log(params.row)
+              <Poptip placement="right">
+                <a>
+                  {sortNum} <Icon type="ios-compose-outline" />
+                </a>
+                <div slot="content">
+                  <input
+                    class="input"
+                    min="1"
+                    type="number"
+                    value={sortNum}
+                    onInput={e => {
+                      sortNum = parseInt(e.target.value)
+                    }}
+                  />
+                  <span
+                    class="input-save"
+                    onClick={e => {
                       let postData = params.row
-                      delete postData._index
-                      delete postData._rowKey
+
+                      delete postData.gmtModified
+
                       postData.sortNum = sortNum
                       _this.setsortNum(postData)
-                    }
-                  }}
-                />
-              </div>
+                    }}
+                  >
+                    保存
+                  </span>／
+                  <span
+                    class="input-cancel"
+                    onClick={e => {
+                      _this.getHomePageList()
+                    }}
+                  >
+                    取消
+                  </span>
+                </div>
+              </Poptip>
+              // <div>
+              //   <input
+              //     class="input"
+              //     min="1"
+              //     type="number"
+              //     value={sortNum}
+              //     onInput={e => {
+              //       sortNum = parseInt(e.target.value)
+              //     }}
+              //     onKeydown={e => {
+              //       if (e.keyCode == '13' && oldValue != sortNum) {
+              //         console.log(params.row)
+              //         let postData = params.row
+
+              //         postData.sortNum = sortNum
+              //         _this.setsortNum(postData)
+              //       }
+              //     }}
+              //   />
+              // </div>
             )
           }
         },
@@ -237,14 +231,11 @@ export default {
         },
         {
           title: '操作',
-          key: 'action',
           align: 'center',
           render(h, params) {
             let copyData, id, data
             id = parseInt(params.row.id)
             data = params.row
-            delete data._index
-            delete data._rowKey
             return (
               <div>
                 <a
@@ -269,29 +260,7 @@ export default {
       ]
     }
   },
-  computed: {
-    publicBtnIsActive: function() {
-      if (this.newpublicId && this.publicSortNo) {
-        return true
-      } else {
-        return false
-      }
-    },
-    exhibitionBtnIsActive: function() {
-      if (this.newexhibitionId && this.exhibitionSortNo) {
-        return true
-      } else {
-        return false
-      }
-    },
-    expertBtnIsActive: function() {
-      if (this.newCustomerId && this.newCustomerNo) {
-        return true
-      } else {
-        return false
-      }
-    }
-  },
+  computed: {},
   mounted() {
     this.getHomePageList()
   },
@@ -346,8 +315,8 @@ export default {
       const { code, msg, data } = await getHomePageList({
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        sortField: 'sortNum',
-        sort: 'ASC',
+        sortField: 'gmtCreate',
+        sort: 'DESC',
         searchInfo: JSON.stringify({
           itemType: this.itemType,
           name: this.name
@@ -376,18 +345,6 @@ export default {
         this.$Message.error(msg)
       }
     }
-
-    // {
-    // "itemId":"关联项目Id",
-    // "itemType":"类型",
-    // "name":"标题",
-    // "imageUrl":"图片",
-    // "linkUrl":"链接",
-    // "lead":"导语",
-    // "publishTime":"推荐时间",
-    // "sortNum":"排序"，
-    // “clickNum”:"点击数"
-    // }
   }
 }
 </script>
@@ -459,6 +416,11 @@ export default {
       }
     }
   }
+}
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .input-save {

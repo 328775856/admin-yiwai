@@ -47,6 +47,20 @@
                       '|', 'removeformat'
                     ]]"></EyEditor>
               </FormItem>
+          <div v-show="show">
+            <div v-show="formValidate.discount || exhibitionTicketsShow">
+              <FormItem label="展券介绍" class="formItem100">
+              </FormItem>
+              <FormItem label="展期" prop="exhibitionTicketsInfoDate" class="formItem45">
+                <DatePicker :value="formValidate.exhibitionTicketsInfoDate" format="yyyy/MM/dd" type="daterange" placeholder="选择展期" style="width: 230px" ref="data" @on-clear="onClear" @on-change="_onChange"></DatePicker>
+              </FormItem>
+              <FormItem label="展券折扣" prop="discount" class="formItem45">
+                <Input v-model="formValidate.discount" placeholder="输入展券折扣" clearable  />
+              </FormItem>
+            </div>
+            <Button style="margin-left: 150px " class="addTicket" type="primary" v-show="!exhibitionTicketsShow" @click="exhibitionTicketsShow = true">新增展券</Button>
+            <Button style="margin-left: 150px " class="addTicket" type="warning" v-show="exhibitionTicketsShow" @click="exhibitionTicketsDelete">删除展券</Button>
+          </div>
             <FormItem class="formItem100 btn">
                 <Button type="primary" @click="save('formValidate')">保存</Button>
                 <Button type="ghost" @click="goBack" style="margin-left: 8px">取消并返回</Button>
@@ -70,7 +84,7 @@ import {
 } from 'iview'
 import EyUpload from '../Common/EyUpload/EyUpload'
 import util from 'libs/js/util.js'
-import { setExhibition } from './Content.service'
+import { setExhibition, getExhibitionTickets, setExhibitionTicket, deleteExhibitionTickets } from './Content.service'
 
 export default {
   name: 'AddArtShow',
@@ -109,13 +123,24 @@ export default {
         image: '',
         place: '',
         price: '',
-        primeCost: ''
+        primeCost: '',
+        discount: '',
+        exhibitionTicketsInfo: {},
+        exhibitionTicketsInfoDate: []
       },
       ruleValidate: {
         exhibitionName: [
           { required: true, message: '展览名称不能为空', trigger: 'blur' }
         ],
         date: [
+          {
+            type: 'array',
+            required: true,
+            message: '展期不能为空',
+            trigger: 'change'
+          }
+        ],
+        exhibitionTicketsInfoDate: [
           {
             type: 'array',
             required: true,
@@ -132,14 +157,17 @@ export default {
         place: [
           { required: true, message: '展览地址不能为空', trigger: 'blur' }
         ],
-        price: [{ required: true, message: '价格不能为空', trigger: 'blur' }]
-      }
+        price: [{type:'number', required: true, message: '价格不能为空', trigger: 'blur' }]
+        ,
+        discount: [{type:'number', required: true, message: '折扣不能为空', trigger: 'blur' }]
+      },
+      exhibitionTicketsShow: false,
+      show: true
     }
   },
   created() {
     // 判断是新增or编辑页面（有参数为编辑，否则为新增）
     const data = this.$route.params.data
-    console.log(data)
     if (data) {
       for (let item in data) {
         if (
@@ -147,10 +175,7 @@ export default {
           this.formValidate.hasOwnProperty(item)
         ) {
           //筛选过滤赋值formValidate
-          if (item == 'price') {
-            this.formValidate[item] = data[item].toString()
-          }
-          this.formValidate[item] = data[item]
+            this.formValidate[item] = data[item]
         }
       }
       if (data.description) {
@@ -168,9 +193,23 @@ export default {
         data.exhibitionStartTime
       } 00:00:00`
       this.formValidate.exhibitionEndTime = `${data.exhibitionEndTime} 00:00:00`
+    }else{
+      this.exhibitionTicketsShow = true
+      this.formValidate.discount = false
+      this.show = false
     }
+    // 获取展券数据
+    getExhibitionTickets({exhibitionId: data.id}).then((res)=>{
+      if(res.code === 10000){
+        this.exhibitionTicketsShow = true
+        this.formValidate.discount = res.data.discount
+        this.formValidate.exhibitionTicketsInfo = res.data
+        this.formValidate.exhibitionTicketsInfoDate = [res.data.ticketStartTime,res.data.ticketEndTime]
+      }
+    })
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     getImageUrl(file) {
       this.isUploadOk = true
@@ -187,6 +226,7 @@ export default {
       this.isUploadOk = false
       this.formValidate.image = ''
     },
+
     onClear() {
       this.formValidate.date = []
     },
@@ -199,11 +239,26 @@ export default {
         this.$refs.data.internalValue[1]
       ) //截至时间
     },
+    _onChange() {
+      this.formValidate.exhibitionTicketsInfoDate = this.$refs.data.internalValue //时间控件选择时触发赋值给this.formValidate.exhibitionTicketsInfoDate,消除表单验证
+      this.formValidate.exhibitionTicketsInfoDate.exhibitionStartTime = util.getNowFormatDate(
+        this.$refs.data.internalValue[0]
+      ) //开始时间
+      this.formValidate.exhibitionTicketsInfoDate.exhibitionEndTime = util.getNowFormatDate(
+        this.$refs.data.internalValue[1]
+      ) //截至时间
+    },
     goBack() {
       this.$router.push({ name: 'Content', params: { tab: '2' } })
     },
 
     save(name) {
+      if(this.exhibitionTicketsShow === true){
+        this.setExhibitionTicket();
+      }else{
+        this.ruleValidate.discount[0].required = false
+        this.ruleValidate.exhibitionTicketsInfoDate[0].required = false
+      }
       this.formValidate.description = this.$refs.editor1.getContent()
       this.formValidate.price = this.formValidate.price.toString()
       console.log(this.formValidate)
@@ -227,6 +282,40 @@ export default {
     },
     handleReset(name) {
       this.$refs[name].resetFields()
+    },
+    setExhibitionTicket(){
+     // 插入展券数据
+      const postData = {
+        id: this.formValidate.exhibitionTicketsInfo.id||0,
+        exhibitionId: this.$route.params.data.id,
+        discount: this.formValidate.discount,
+        ticketStartTime: this.formValidate.exhibitionTicketsInfoDate[0],
+        ticketEndTime: this.formValidate.exhibitionTicketsInfoDate[1]
+      }
+      setExhibitionTicket({exhibitionTicketsInfo:JSON.stringify(postData)}).then((res)=>{
+       // alert(res.code)
+        getExhibitionTickets({exhibitionId: this.$route.params.data.id}).then((res)=>{
+          if(res.code === 10000){
+            this.formValidate.exhibitionTicketsInfo = res.data
+            this.formValidate.exhibitionTicketsInfoDate = [res.data.ticketStartTime,res.data.ticketEndTime]
+          }
+        })
+      })
+    },
+    exhibitionTicketsDelete(){
+      this.$Modal.confirm({
+        title: '系统提示',
+        content: `<p>确定要删除吗？</p>`,
+        onOk: async () => {
+          const { code, msg } = await deleteExhibitionTickets({id:this.formValidate.exhibitionTicketsInfo.id})
+          if (code === 10000 || code === '10000') {
+            this.$Message.success(msg)
+            this.getExhibitionTickets()
+          } else if (code === 10001 || code === '10001') {
+            this.$Message.error(msg)
+          }
+        }
+      })
     }
   }
 }

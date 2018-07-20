@@ -79,6 +79,7 @@ export default {
       customerType: '艺术家',
       customerTypeList: ['个人', '艺术家', '机构'],
       rowData: null,
+      itemName: '',
       columns: [
         {
           title: "编号",
@@ -174,7 +175,7 @@ export default {
             return (
               <div>
               <p>{this.customerTypeList[customerDto.type-1]}</p>
-              <p class="edit">{}</p>
+              <p class="edit">{this.itemName}</p>
               </div>
           );
           }
@@ -319,21 +320,21 @@ export default {
     _customerType(row){
       this.modal1 = true;
       this.rowData = row;
+      console.log(row.customerDto.type)
     },
     getItem(item) {
-      console.log(item)
+      console.log(item.value)
       this.artistId = item.key;
+      this.itemName = item.value;
     },
     ok () {
       this.$Message.info('ok');
       const postData = {
         bindId: this.artistId,
-        // customerId: this.rowData.id,
-        customerId: 46,
+        customerId: this.rowData.customerDto.id,
         type: this.customerTypeList.indexOf(this.customerType)+1
       };
       setCustomerType(postData).then((res)=>{
-        alert(res.code)
         if(res.code === 10000) {
           this.getCustomerList();
         }

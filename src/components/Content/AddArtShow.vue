@@ -59,7 +59,7 @@
               </FormItem>
             </div>
             <Button style="margin-left: 150px " class="addTicket" type="primary" v-show="!exhibitionTicketsShow" @click="exhibitionTicketsShow = true">新增展券</Button>
-            <Button style="margin-left: 150px " class="addTicket" type="warning" v-show="exhibitionTicketsShow" @click="exhibitionTicketsDelete">删除展券</Button>
+            <Button style="margin-left: 150px " class="addTicket" type="warning" v-show="formValidate.discount && exhibitionTicketsShow && deleteShow" @click="exhibitionTicketsDelete">删除展券</Button>
           </div>
             <FormItem class="formItem100 btn">
                 <Button type="primary" @click="save('formValidate')">保存</Button>
@@ -157,12 +157,13 @@ export default {
         place: [
           { required: true, message: '展览地址不能为空', trigger: 'blur' }
         ],
-        price: [{type:'number', required: true, message: '价格不能为空', trigger: 'blur' }]
+        price: [{type: 'string', required: true, message: '价格不能为空', trigger: 'blur' }]
         ,
-        discount: [{type:'number', required: true, message: '折扣不能为空', trigger: 'blur' }]
+        discount: [{ type: 'string',required: true, message: '折扣不能为空', trigger: 'blur' }]
       },
       exhibitionTicketsShow: false,
-      show: true
+      show: true,
+      deleteShow: false
     }
   },
   created() {
@@ -175,7 +176,7 @@ export default {
           this.formValidate.hasOwnProperty(item)
         ) {
           //筛选过滤赋值formValidate
-            this.formValidate[item] = data[item]
+            this.formValidate[item] = data[item].toString()
         }
       }
       if (data.description) {
@@ -202,7 +203,8 @@ export default {
     getExhibitionTickets({exhibitionId: data.id}).then((res)=>{
       if(res.code === 10000){
         this.exhibitionTicketsShow = true
-        this.formValidate.discount = res.data.discount
+        this.deleteShow = true
+        this.formValidate.discount = res.data.discount.toString()
         this.formValidate.exhibitionTicketsInfo = res.data
         this.formValidate.exhibitionTicketsInfoDate = [res.data.ticketStartTime,res.data.ticketEndTime]
       }
@@ -310,7 +312,7 @@ export default {
           const { code, msg } = await deleteExhibitionTickets({id:this.formValidate.exhibitionTicketsInfo.id})
           if (code === 10000 || code === '10000') {
             this.$Message.success(msg)
-            this.getExhibitionTickets()
+            this.$router.push({ name: 'Content', params: { tab: 2 } })
           } else if (code === 10001 || code === '10001') {
             this.$Message.error(msg)
           }

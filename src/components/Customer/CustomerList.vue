@@ -171,7 +171,6 @@ export default {
           align: 'center',
           render: (h, params) => {
             const { customerDto, commentNum } = params.row;
-            console.log(params.row,'234')
             return (
               <div>
               <p>{this.customerTypeList[customerDto.type-1]}</p>
@@ -323,7 +322,6 @@ export default {
       console.log(this.rowData)
     },
     getItem(item) {
-      console.log(item);
       this.customerId = item.key;
       this.replyInfo.nickName = item.value;
     },

@@ -82,6 +82,7 @@
             </div>
           </fieldset>
           <Button type="primary" icon="plus" class="add" @click="add('tab3')">新增展览</Button>
+          
           <Table :data="artShowData.exhibitionList" :columns="artShowColumns" border :loading="loading2"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">

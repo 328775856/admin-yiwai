@@ -319,21 +319,29 @@ export default {
     _customerType(row){
       this.modal1 = true;
       this.rowData = row;
-      console.log(this.rowData)
     },
     getItem(item) {
+//<<<<<<< HEAD
       this.customerId = item.key;
       this.replyInfo.nickName = item.value;
+//=======
+//      console.log(item)
+//      this.artistId = item.key;
+//>>>>>>> df64d47bc9ad14684b44d61bafcbe9db9c00b3b4
     },
     ok () {
       this.$Message.info('ok');
       const postData = {
-        bindId:this.rowData.id,
-        customerId: this.rowData.customerId,
-        type: this.rowData.customerDto.type
+        bindId: this.artistId,
+        // customerId: this.rowData.id,
+        customerId: 46,
+        type: this.customerTypeList.indexOf(this.customerType)+1
       };
       setCustomerType(postData).then((res)=>{
-        console.log(res)
+        alert(res.code)
+        if(res.code === 10000) {
+          this.getCustomerList();
+        }
       })
 
     },

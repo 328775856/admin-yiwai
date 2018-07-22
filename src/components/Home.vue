@@ -148,7 +148,7 @@ export default {
         '3-1': '/Culture',
         '3-2': '/Brand'
       },
-      haveEyEditorRoute: ['/AddArticle', '/AddCultureDetail'],
+      haveEyEditorRoute: ['/AddArticle', '/AddCultureDetail', '/AddArtShow'],
       isNativeOvh: false,
       userName: '',
       active: '',

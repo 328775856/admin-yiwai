@@ -54,6 +54,7 @@ export default {
     Modal
   },
   data() {
+    let _this = this
     return {
       exhibitionName: '',
       loading: true,
@@ -65,7 +66,7 @@ export default {
       pageNo: 1,
       pageSize: 10,
       currentPage: 1,
-      sortField: '',
+      sortField: 'gmtCreate',
       sort: '',
       totalItems: 0,
       dataList: [],
@@ -192,7 +193,7 @@ export default {
           key: '',
           align: 'center',
           render: (h, params) => {
-            const { productDto } = params.row
+            const { productDto, id } = params.row
             return (
               <div>
                 <input
@@ -208,11 +209,13 @@ export default {
                   }}
                   onKeydown={e => {
                     if (e.keyCode == '13') {
-                      this.setExhibits({
-                        id: params.row.id,
+                      let obj = {
+                        id: id,
+                        exhibitionId: _this.exhibitionId,
                         productId: productDto.id,
                         sortNum: e.target.value
-                      })
+                      }
+                      this.setExhibit(obj)
                     }
                   }}
                 />
@@ -288,6 +291,16 @@ export default {
     },
     getItem({ key }) {
       this.productId = key
+    },
+
+    async setExhibit(obj) {
+      let postData = {
+        exhibitsInfo: JSON.stringify(obj)
+      }
+      const { code, data, msg } = await setExhibits(postData)
+      if (+code === 10000) {
+        this.getDataList()
+      }
     },
 
     async getRepDataList() {

@@ -21,11 +21,20 @@ const getArtistMerchandisetList = data => request.post('getArtistMerchandisetLis
 const getArtistArtistList = data => request.post("getArtistArtistList/v1",data);
 const setArtistArtist = data => request.post("setArtistArtist/v1",data);
 const deleteArtistArtist = data => request.post("deleteArtistArtist/v1",data);
+
+//艺术品媒体
+const getProductMediaList = data => request.post("getProductMediaList/v1",data);
+const setProductMedia = data => request.post("setProductMedia/v1",data);
+const deleteProductMedia = data => request.post("deleteProductMedia/v1",data);
+
 export {
   getArtistStatisticsList, setArtist, deleteArtist,
   setProduct,getArtistArticleList,getArticleList,
   deleteArtistArticle,setArtistArticle,deleteArtistMerchandise,setArtistMerchandise,getArtistMerchandisetList,
   getArtistArtistList,
   deleteArtistArtist,
-  setArtistArtist
+  setArtistArtist,
+  getProductMediaList,
+  setProductMedia,
+  deleteProductMedia
  };

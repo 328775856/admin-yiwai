@@ -586,6 +586,7 @@
                   this.setProductMedia(this.rowId)
                   this.$Message.info('修改成功');
                 }
+                this.modal1 = false
               }
             })
             this.loading = true;

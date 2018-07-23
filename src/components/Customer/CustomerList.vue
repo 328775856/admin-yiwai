@@ -320,7 +320,7 @@ export default {
       this.rowData = row;
     },
     getItem(item) {
-      // 2
+      // 1
       this.artistId = item.key;
       this.itemName[this.artistId] = item.value;
     },
@@ -339,7 +339,6 @@ export default {
 
     },
     cancel () {
-      this.$Message.info('取消设置');
     }
   }
 };

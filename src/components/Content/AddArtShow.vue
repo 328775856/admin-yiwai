@@ -288,7 +288,7 @@ export default {
     setExhibitionTicket(){
      // 插入展券数据
       const postData = {
-        id: 0 || this.formValidate.exhibitionTicketsInfo.id,
+        id: this.formValidate.exhibitionTicketsInfo.id,
         exhibitionId: this.$route.params.data.id,
         discount: this.formValidate.discount,
         ticketStartTime: this.formValidate.exhibitionTicketsInfoDate[0],

@@ -88,39 +88,42 @@
       <FormItem label="艺术品介绍" prop="proDescription" class="formItem100">
       </FormItem>
       <Modal v-model="modal1"
-             title="对话框"
-             @on-ok="ok"
+             title="新增媒体文件"
+             @on-ok="ok('formValidate')"
+             :loading="loading"
              @on-cancel="cancel">
-        <FormItem label="" class="formItem45">
+        <FormItem label="请选择" class="formItem100">
           <RadioGroup v-model="type">
             <Radio label="音频"></Radio>
             <Radio label="视频"></Radio>
           </RadioGroup>
         </FormItem>
-        <FormItem label="相关视频" class="formItem100">
+        <FormItem label="相关图片" prop="videoImage" class="formItem100">
           <EyUpload @upload-ok="getVideoImgUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize"
                     imgSizeText="封面图片规格：高422px,宽750px" accept="image/jpeg,image/jpg,image/png"/>
-          <p v-show="isVideoUploadOk">
-          <span class="headImg">
-          <Icon type="close-circled" size="18" class="closeIcon" @click.native="resetImg('videoImage')"></Icon>
+          <p v-show="isVideoUploadOk" class="imageP">
+          <span class="imageSpan">
+          <Icon type="close-circled" size="18" class="imageIcon" @click.native="resetImg('videoImage')"></Icon>
           <img :src="formValidate.videoImage+'?imageView2/1/w/135/h/165/q/50'" class="img">
           </span>
           </p>
         </FormItem>
-        <FormItem label="相关视频" class="formItem100 upload" v-show="type ==='视频'">
+        <FormItem label="相关视频" prop="videoUrl" class="formItem100 upload" v-if="type ==='视频'">
           <Input v-model="formValidate.videoUrl" placeholder="输入视频链接地址" clearable :maxlength="200"/>
           <router-link :to="{ path: '/Video'}" target="_blank">上传视频</router-link>
         </FormItem>
-        <FormItem label="相关音频" class="formItem100 upload" v-show="type ==='音频'">
+        <FormItem label="相关音频" prop="voiceUrl" class="formItem100 upload" v-if="type ==='音频'">
           <Input v-model="formValidate.voiceUrl" placeholder="输入音频链接地址" clearable :maxlength="200"/>
           <router-link :to="{ path: '/Video'}" target="_blank">上传音频</router-link>
         </FormItem>
-        <FormItem label="标题" class="formItem45">
+        <FormItem label="标题" class="formItem100">
           <Input v-model="mediaTitle"  placeholder="输入作品标签，按回车键添加标签"/>
         </FormItem>
       </Modal>
-      <Button style="margin-left: 150px " class="addTicket" type="primary" @click="addNew">新增</Button>
+      <FormItem label="媒体文件" class="formItem100">
         <Table :data="ProductMediaData.mediaList" :columns="ProductMediacolumns" border></Table>
+        <Button style="margin-top: 30px " class="addTicket" type="primary" @click="addNew">新增</Button>
+      </FormItem>
       <FormItem class="formItem100 btn">
         <Button type="primary" @click="save('formValidate')">保存</Button>
         <Button type="ghost" @click="goBack('1')" style="margin-left: 8px">取消并返回</Button>
@@ -180,6 +183,24 @@
       Modal
     },
     data() {
+      const validateVideoUrl= (rule,value,callback) => {
+        if (value === '') {
+          callback(new Error('地址不能为空 '));
+        };
+        if (value.indexOf('mp4') === -1) {
+          callback(new Error('请输入视频文件 '));
+        };
+        callback()
+      }
+      const validateVoiceUrl= (rule,value,callback) => {
+        if (value === '') {
+          callback(new Error('地址不能为空 '));
+        };
+        if (value.indexOf('mp3') === -1) {
+          callback(new Error('请输入音频文件 '));
+        };
+        callback()
+      }
       return {
         one: '',
         two: '',
@@ -238,18 +259,26 @@
           proDescription: [
             {required: true, message: '艺术品介绍不能为空', trigger: 'blur'},
           ],
+          voiceUrl: [
+            {required: true,validator:validateVoiceUrl,  trigger: 'blur'},
+          ],
+          videoUrl: [
+          {required: true, validator: validateVideoUrl, trigger: 'blur'},
+        ],
+          videoImage:[
+            {required: true,message: '图片不能为空', trigger: 'blur'},
+          ]
         },
         proTypeData: [],
         productTypeList: [],
         mediaTitle: '',
-        type: '音频',
-        typeList: ['音频','视频'],
+        type: '视频',
+        typeList: ['视频','音频'],
         ProductMediaData: {},
         ProductMediacolumns: [
           {
             title: '编号',
             key: 'id',
-            width: 70,
             align: 'center',
             render(h, params) {
               return <div>{params.row.id}</div>
@@ -258,7 +287,6 @@
           {
             title: '文件地址',
             key: 'id',
-            width: 700,
             align: 'center',
             render(h, params) {
               return <div>{params.row.mediaUrl}</div>
@@ -267,7 +295,6 @@
           {
             title: '图片地址',
             key: 'id',
-            width: 600,
             align: 'center',
             render(h, params) {
               return <img class='img' src={params.row.mediaImage}/>
@@ -276,7 +303,6 @@
           {
             title: '文件标题',
             key: 'id',
-            width: 70,
             align: 'center',
             render(h, params) {
               return <div>{params.row.mediaTitle}</div>
@@ -285,16 +311,14 @@
           {
             title: '文件类型',
             key: 'id',
-            width: 70,
             align: 'center',
             render(h, params) {
-              return <div>{['音频','视频'][params.row.type-1]}</div>
+              return <div>{['视频','音频'][params.row.type-1]}</div>
             }
           },
           {
             title: '操作',
             key: 'id',
-            width: 70,
             align: 'center',
             render(h, params) {
               return <div>
@@ -317,8 +341,7 @@
                   onOk: async () => {
                     const { code, msg } = await deleteProductMedia({mediaId: params.row.id})
                     if (code === 10000 || code === '10000') {
-                      that.$Message.success(msg)
-                      getProductMediaList({productId: that.productTypeList[0].id}).then((res)=>{
+                      getProductMediaList({productId: that.$route.params.data.id}).then((res)=>{
                         if(res.code === 10000){
                           that.ProductMediaData = res.data
                         }
@@ -340,7 +363,8 @@
         ],
         modal1: false,
         rowId: '',
-        isNew: false
+        isNew: false,
+        loading: true
       }
     },
     created() {
@@ -474,7 +498,7 @@
       },
       async getProductTypeList({level = 0}) {
         const {data: {productTypeList}} = await getProductTypeList({level});
-        getProductMediaList({productId: productTypeList[0].id}).then((res)=>{
+        getProductMediaList({productId: this.$route.params.data.id}).then((res)=>{
           if(res.code === 10000){
             this.ProductMediaData = res.data
           }
@@ -527,7 +551,7 @@
       setProductMedia(id) {
         const postData = {
           id: id || 0,
-          productId: this.productTypeList[0].id,
+          productId: this.$route.params.data.id,
           mediaUrl: this.formValidate.videoUrl || this.formValidate.voiceUrl,
           mediaImage: this.formValidate.videoImage,
           mediaTitle: this.mediaTitle,
@@ -535,7 +559,7 @@
         };
         setProductMedia({mediaInfo: JSON.stringify(postData)}).then((res) => {
           if (res.code === 10000) {
-            getProductMediaList({productId: this.productTypeList[0].id}).then((res)=>{
+            getProductMediaList({productId: this.$route.params.data.id}).then((res)=>{
               if(res.code === 10000){
                 this.ProductMediaData = res.data
               }
@@ -543,16 +567,48 @@
           }
         })
       },
-      ok () {
-        if(this.isNew === true){
-          this.setProductMedia(0)
-        }else{
-          this.setProductMedia(this.rowId)
-        }
-        this.$Message.info('Clicked ok');
+      ok (name) {
+        // this.$Message.info('异步验证数据');
+        setTimeout(() => {
+          this.loading = false;
+          this.$nextTick(() => {
+            this.$refs[name].validate(async (valid) => {
+              // if(valid === false){
+              //   setTimeout(function(){
+              //     this.modal1 = false
+              //   },3000)
+              // }
+              if (valid) {
+                if(this.isNew === true){
+                  this.setProductMedia(0)
+                  this.$Message.info('新增成功');
+                }else{
+                  this.setProductMedia(this.rowId)
+                  this.$Message.info('修改成功');
+                }
+              }
+            })
+            this.loading = true;
+          });
+        }, 1000);
+        // this.$refs[name].validate(async (valid) => {
+        //   // if(valid === false){
+        //   //   setTimeout(function(){
+        //   //     this.modal1 = false
+        //   //   },3000)
+        //   // }
+        //   if (valid) {
+        //     if(this.isNew === true){
+        //       this.setProductMedia(0)
+        //       this.$Message.info('新增成功');
+        //     }else{
+        //       this.setProductMedia(this.rowId)
+        //       this.$Message.info('修改成功');
+        //     }
+        //   }
+        // })
       },
       cancel () {
-        this.$Message.info('Clicked cancel');
       },
       addNew(){
         this.modal1 = true
@@ -601,5 +657,24 @@
     width: 77px;
     height: 100px;
   }
-
+  .ivu-modal .ivu-form-item-content{
+    width: 400px!important;
+    display: inline-block!important;
+    margin-left: 20px!important;
+  }
+  .ivu-modal .ivu-form-item-label{
+    width: 60px!important;
+    display: inline-block!important;
+    text-align: right;
+  }
+  .imageP{
+    height: 100%;
+    padding-top: 18px;
+  }
+  .imageSpan{
+    height: 100%;display: inline-block;position: relative;
+  }
+  .imageIcon{
+    font-size: 18px;position: absolute;top: -18px;right: -18px;
+  }
 </style>

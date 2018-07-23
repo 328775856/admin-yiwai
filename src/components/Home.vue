@@ -72,6 +72,13 @@
           <span>系统设置</span>
           </MenuItem>
 
+          <Submenu name='4'>
+              <template slot="title">
+                  <Icon type='ios-location'></Icon>
+                  活动管理
+              </template>
+              <MenuItem name="4-1">青年活动</MenuItem>
+          </Submenu>
           <!-- <Submenu name="2">
             <template slot="title">
               <Icon type="ios-location"></Icon>
@@ -146,9 +153,12 @@ export default {
 
         // 博物馆
         '3-1': '/Culture',
-        '3-2': '/Brand'
+        '3-2': '/Brand',
+
+        //活动管理
+        '4-1': '/Youth' //青年活动
       },
-      haveEyEditorRoute: ['/AddArticle', '/AddCultureDetail', '/AddArtShow'],
+      haveEyEditorRoute: ['/AddArticle', '/AddCultureDetail', '/AddArtShow','/AddOrgan'],
       isNativeOvh: false,
       userName: '',
       active: '',

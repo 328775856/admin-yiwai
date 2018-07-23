@@ -15,7 +15,7 @@
             <div class="search">
               <div>
                 <label for="">姓名：</label>
-                <Input v-model="artName" placeholder="输入艺术家姓名" style="width: 180px" />
+                <Input v-model="artName" placeholder="输入艺术家姓名" clearable style="width: 180px" />
                 <Button type="primary" icon="ios-search" @click="search('art')">查询</Button>
               </div>
               <EyFilter :data="[{key:'',value:'全部',isActive:true},{key:1,value:'中国'},{key:2,value:'西方'}]" @get-item="getItem"></EyFilter>
@@ -66,10 +66,34 @@
       </TabPane>
       <!-- tab-2 结束 -->
 
-      <!-- tab-3 开始 -->
-      <!-- <TabPane :label="labelList[2]">标签三的内容
-      </TabPane> -->
-      <!-- tab-3 结束 -->
+      <TabPane :label="labelList[2]" class="tab">
+        <div class="artProduct">
+          <fieldset class="fieldset">
+            <legend>查询条件</legend>
+            <div class="search">
+              <div>
+                <label for="">查询条件</label>
+                <Select v-model="queryCondition" placeholder="全部" style="width:100px">
+                  <Option v-for="(item,index) in queryList" :value="item.value" :key="index">{{ item.name }}</Option>
+                </Select>
+                <Input v-model="queryName"  clearable style="width:180px;" placeholder="搜索关键字"></Input>
+              </div>
+            </div>
+            <div style="padding-bottom:30px;">
+              <Button type="primary" icon="ios-search" @click="search('organ')">筛选</Button>
+              <Button type="default" @click="reset">清空筛选条件</Button>
+            </div>
+          </fieldset>
+          <Button type="primary" icon="plus" class="add" @click="add('AddOrgan')">新增机构</Button>
+          <Table :data="organList" :columns="organColumns" border :loading="organLoading"></Table>
+          <div style="margin: 10px;overflow: hidden">
+            <div style="float: right;">
+              <Page class="paging tr mt10" :current.sync="currentOrganPage" :total="organTotalItems" show-total show-elevator placement="top" @on-change="changeOrganPage"></Page>
+            </div>
+          </div>
+        </div>
+      </TabPane>
+
     </Tabs>
     <!-- 三个tab页end -->
   </div>
@@ -90,7 +114,12 @@ import {
 } from 'iview'
 import EyFilter from '../Common/EyFilter/EyFilter'
 import { getProductStatisticsList } from 'libs/js/api.js'
-import { getArtistStatisticsList, deleteArtist } from './Base.service.js'
+import {
+  getArtistStatisticsList,
+  deleteArtist,
+  getOrganStatisticsList,
+  deleteOrgan
+} from './Base.service.js'
 
 export default {
   name: 'Base',
@@ -108,16 +137,17 @@ export default {
     EyFilter
   },
   data() {
+    let _this = this
     return {
       loading1: true,
       loading2: true,
-      labelList: ['艺术家库', '艺术品库', '展馆库'],
+      labelList: ['艺术家库', '艺术品库', '机构'],
       isAdd: false,
       index: 0,
       artName: '',
       apageSize: 10,
-      apageNo: 0,
-      pPageNo: 0,
+      apageNo: 1,
+      pPageNo: 1,
       pPageSize: 10,
       psortField: '',
       sortField: '',
@@ -132,6 +162,7 @@ export default {
         { value: 1, name: '已发布' },
         { value: 0, name: '未发布' }
       ],
+      queryList: [{ value: 2, name: '名称' }, { value: 1, name: '编号' }],
       artPeoplecolumns: [
         {
           title: '编号',
@@ -240,20 +271,30 @@ export default {
             )
           }
         },
-        // {
-        //   title: '年代',
-        //   key: 'years',
-        //   align: 'center',
-        //   render: (h, params) => {
-        //     const birthDate = params.row.birthDate;
-        //     const deathDate = params.row.deathDate
-        //     return (
-        //       <div>
-        //         {birthDate ? birthDate : '?'} - {deathDate ? deathDate : '?'}
-        //       </div>
-        //     )
-        //   }
-        // },
+        {
+          title: '展览',
+          key: 'years',
+          align: 'center',
+          render(h, params) {
+            const { artistId } = params.row
+            return (
+              <div>
+                <div>{artistId}</div>
+                <span
+                  class="edit"
+                  onClick={() => {
+                    _this.$router.push({
+                      path: '/Base/RelateArtistExhibition',
+                      query: { artistId: artistId }
+                    })
+                  }}
+                >
+                  管理
+                </span>
+              </div>
+            )
+          }
+        },
         {
           title: '创建时间',
           key: 'gmtCreate',
@@ -476,7 +517,143 @@ export default {
           }
         }
       ],
-      artProductData: {}
+      artProductData: {},
+
+      queryName: '',
+      organList: [],
+      organPageNo: 1,
+      organPageSize: 10,
+      organSort: '',
+      organsortField: '',
+      organLoading: false,
+      currentOrganPage: 1,
+      organTotalItems: 0,
+      queryCondition: '',
+      organColumns: [
+        {
+          title: '编号',
+          key: 'id',
+          align: 'center'
+        },
+        {
+          title: '机构',
+          key: 'name',
+          align: 'center',
+          render(h, params) {
+            const { name, avatar } = params.row
+            return (
+              <div>
+                <div
+                  class="headImg"
+                  style={`background:url(${avatar}?imageView2/1/w/150/h/150/q/50) no-repeat center;background-size: contain;`}
+                />
+                <span>{name}</span>
+              </div>
+            )
+          }
+        },
+        {
+          title: '签约艺术家',
+          key: 'id',
+          align: 'center',
+          render(h, params) {
+            const { artistNum, id } = params.row
+            return (
+              <div>
+                <div>{artistNum}</div>
+                <span
+                  class="edit"
+                  onClick={() => {
+                    _this.$router.push({
+                      path: '/Base/RelateSignedArtist',
+                      query: { organId: id }
+                    })
+                  }}
+                >
+                  管理
+                </span>
+              </div>
+            )
+          }
+        },
+        {
+          title: '馆藏',
+          key: 'id',
+          align: 'center',
+          render(h, params) {
+            const { productNum, id } = params.row
+            return (
+              <div>
+                <div>{productNum}</div>
+                <span
+                  class="edit"
+                  onClick={() => {
+                    _this.$router.push({
+                      path: '/Base/RelateCollect',
+                      query: { organId: id }
+                    })
+                  }}
+                >
+                  管理
+                </span>
+              </div>
+            )
+          }
+        },
+        {
+          title: '展览',
+          key: 'id',
+          align: 'center',
+          render(h, params) {
+            const { exhibitionNum, id } = params.row
+            return (
+              <div>
+                <div>{exhibitionNum}</div>
+                <span
+                  class="edit"
+                  onClick={() => {
+                    _this.$router.push({
+                      path: '/Base/RelateExhibition',
+                      query: { organId: id }
+                    })
+                  }}
+                >
+                  管理
+                </span>
+              </div>
+            )
+          }
+        },
+
+        {
+          title: '操作',
+          align: 'center',
+          key: 'operate',
+          render(h, params) {
+            const data = params.row
+            return (
+              <div>
+                <span
+                  onClick={() =>
+                    _this.$router.push({ name: 'AddOrgan', params: { data } })
+                  }
+                  class="edit"
+                >
+                  编辑
+                </span>
+                <span
+                  class="edit"
+                  onClick={() => {
+                    _this.confirmDelOrgan(data.id)
+                  }}
+                >
+                  删除
+                </span>
+              </div>
+            )
+          }
+        }
+      ]
     }
   },
   created() {
@@ -497,6 +674,8 @@ export default {
       this.artProductName = params.productName
     }
     this.getProductStatisticsList()
+
+    this.getOrganDataList()
   },
   watch: {
     $route(newValue, oldValue) {
@@ -535,6 +714,9 @@ export default {
       } else if (sort === 'artProduct') {
         this.currentPageNoProduct = 1
         this.getProductStatisticsList()
+      } else if (sort === 'organ') {
+        this.currentOrganPage = 1
+        this.getOrganDataList()
       }
     },
     onChangeTab1(pageNo) {
@@ -604,6 +786,62 @@ export default {
           }
         }
       })
+    },
+
+    // 机构部分
+
+    // 获取机构列表
+    async getOrganDataList() {
+      const params = {
+        pageNo: this.organPageNo,
+        pageSize: this.organPageSize,
+        searchInfo: JSON.stringify({
+          name: this.queryCondition === 2 ? this.queryName : '',
+          id: this.queryCondition === 1 ? this.queryName : ''
+        }),
+        sortField: this.organsortField,
+        sort: this.organSort
+      }
+      const { code, data } = await getOrganStatisticsList(params)
+      if (+code === 10000) {
+        this.organList = data.data
+        this.organTotalItems = data.totalItems
+        this.organLoading = false
+      }
+    },
+
+    changeOrganPage(page) {
+      this.organPageNo = page
+      this.getOrganDataList()
+    },
+
+    //重置
+
+    reset() {
+      this.queryName = ''
+    },
+
+    // 删除展览
+    confirmDelOrgan(organId) {
+      this.$Modal.confirm({
+        title: '系统提示',
+        content: `<p>确定要删除吗？</p>`,
+        onOk: () => {
+          this.delOrgan(organId)
+        }
+      })
+    },
+    async delOrgan(organId) {
+      const postData = {
+        id: organId
+      }
+      const { code, data, msg } = await deleteOrgan(postData)
+      if (+code === 10000) {
+        this.getOrganDataList()
+        this.$Message.success(msg)
+      } else {
+        this.$Message.error(msg)
+      }
     }
   }
 }

@@ -82,7 +82,7 @@
             </div>
           </fieldset>
           <Button type="primary" icon="plus" class="add" @click="add('tab3')">新增展览</Button>
-          
+
           <Table :data="artShowData.exhibitionList" :columns="artShowColumns" border :loading="loading2"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
@@ -439,15 +439,38 @@ export default {
           }
         },
         {
-          title: '观展人数',
+          title: '展览地点',
           align: 'center',
           width: 100,
-          key: 'clickNum'
+          key: 'place'
         },
         {
           title: '创建时间',
           align: 'center',
           key: 'gmtCreate'
+        },
+        {
+          title: '展览艺术家',
+          align: 'center',
+          render(h, params) {
+            const { productNum, id } = params.row
+            return (
+              <div>
+                <div>{productNum}</div>
+                <span
+                  class="edit"
+                  onClick={() => {
+                    _this.$router.push({
+                      path: '/Content/RelateExhibitionArtist',
+                      query: { exhibitionId: id }
+                    })
+                  }}
+                >
+                  管理
+                </span>
+              </div>
+            )
+          }
         },
         {
           title: '状态',

@@ -30,7 +30,7 @@
       </div>
       <div class="flex-row">
         <div>选择{{customerType}}：</div>
-        <EySelectsearch v-show="customerType == '机构'" ref="eySelectsearch" url="/getOrganList/v1" name="name" resultList="data" :postData="{searchInfo: {  name: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['id','name']" placeHolder="请选择" @getItem="getItem">
+        <EySelectsearch v-show="customerType == '机构'" ref="eySelectsearch" url="/getOrganStatisticsList/v1" name="name" resultList="data" :postData="{searchInfo: {  name: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['id','name']" placeHolder="请选择" @getItem="getItem">
         </EySelectsearch>
         <EySelectsearch  v-show="customerType == '艺术家'" ref="eySelectsearch" url="/getArtistStatisticsList/v1" name="artistName" resultList="artistList" :postData="{searchInfo: { artistName: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['artistId','artistDto.name']" placeHolder="请选择" @getItem="getItem">
         </EySelectsearch>
@@ -79,7 +79,7 @@ export default {
       customerType: '艺术家',
       customerTypeList: ['个人', '艺术家', '机构'],
       rowData: null,
-      itemName: '',
+      itemName: [],
       columns: [
         {
           title: "编号",
@@ -175,7 +175,7 @@ export default {
             return (
               <div>
               <p>{this.customerTypeList[customerDto.type-1]}</p>
-              <p class="edit">{this.itemName}</p>
+              <p class="edit">{this.itemName[this.artistId]}</p>
               </div>
           );
           }
@@ -210,7 +210,6 @@ export default {
       this.nickName = params.customerName;
     }
     this.getCustomerList()
-    console.log(this.$route.params);
   },
   mounted() {
     // 设置searchInfo
@@ -235,7 +234,6 @@ export default {
       });
     },
     operateData(list) {
-      console.log(list);
       list.map((item, i) => {
         // 判断头像图片资源是否为七牛云的，如果是的话进行压缩
         const { avatarUrl: customerImg } = item.customerDto;
@@ -286,7 +284,6 @@ export default {
         title: '系统提示',
         content: `<p>确定要删除用户 [ ${customerDto.nickName} ] 吗？</p>`,
         onOk: () => {
-          console.log(customerDto.id);
           deleteCustomer({ customerId: customerDto.id }).then(({ code }) => {
             if (code == '10000') {
               this.$Message.success('删除成功！');
@@ -306,7 +303,6 @@ export default {
       this.pIsShowModel = true;
     },
     onSortChange({ column, key, order }) {
-      console.log(key, 'key');
       const k = key == 'gmtCreate' ? 'id' : key;
       if ('normal' == order) {
         this.sortField = '';
@@ -318,27 +314,18 @@ export default {
       this.getCustomerList();
     },
     _customerType(row){
+      // 1
+    //  this.artistId = row.id;
       this.modal1 = true;
       this.rowData = row;
-      console.log(row.customerDto.type)
     },
     getItem(item) {
-//<<<<<<< HEAD
-////<<<<<<< HEAD
-//      this.customerId = item.key;
-//      this.replyInfo.nickName = item.value;
-////=======
-////      console.log(item)
-////      this.artistId = item.key;
-//////>>>>>>> df64d47bc9ad14684b44d61bafcbe9db9c00b3b4
-////=======
-      console.log(item.value)
+      // 2
       this.artistId = item.key;
-      this.itemName = item.value;
-//>>>>>>> 8adb3246dbb77d276642ab113b1453a091a716b5
+      this.itemName[this.artistId] = item.value;
     },
     ok () {
-      this.$Message.info('ok');
+      this.$Message.info('设置成功');
       const postData = {
         bindId: this.artistId,
         customerId: this.rowData.customerDto.id,
@@ -352,7 +339,7 @@ export default {
 
     },
     cancel () {
-      this.$Message.info('cancel');
+      this.$Message.info('取消设置');
     }
   }
 };

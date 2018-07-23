@@ -58,7 +58,7 @@
                 <Input v-model="formValidate.discount" placeholder="输入展券折扣" clearable  />
               </FormItem>
             </div>
-            <Button style="margin-left: 150px " class="addTicket" type="primary" v-show="!exhibitionTicketsShow" @click="exhibitionTicketsShow = true">新增展券</Button>
+            <Button style="margin-left: 150px " class="addTicket" type="primary" v-show="!exhibitionTicketsShow" @click="addNew">新增展券</Button>
             <Button style="margin-left: 150px " class="addTicket" type="warning" v-show="formValidate.discount && exhibitionTicketsShow && deleteShow" @click="exhibitionTicketsDelete">删除展券</Button>
           </div>
             <FormItem class="formItem100 btn">
@@ -288,7 +288,7 @@ export default {
     setExhibitionTicket(){
      // 插入展券数据
       const postData = {
-        id: this.formValidate.exhibitionTicketsInfo.id||0,
+        id: 0 || this.formValidate.exhibitionTicketsInfo.id,
         exhibitionId: this.$route.params.data.id,
         discount: this.formValidate.discount,
         ticketStartTime: this.formValidate.exhibitionTicketsInfoDate[0],
@@ -318,6 +318,9 @@ export default {
           }
         }
       })
+    },
+    addNew(){
+      this.exhibitionTicketsShow = true
     }
   }
 }

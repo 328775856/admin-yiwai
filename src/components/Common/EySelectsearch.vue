@@ -145,6 +145,7 @@ export default {
 
       }
 
+      // alert(_this.name)
     },
     _operateData(list) {
       const { kv } = this;

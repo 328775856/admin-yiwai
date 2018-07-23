@@ -34,7 +34,7 @@
 <script>
 import { Button, Table, Page, Select, Option, Input, Modal, Form, FormItem, RadioGroup, Radio, Row, Col } from 'iview';
 import { getProductTypeList } from 'libs/js/api.js';
-import { setProductType } from './System.service';
+import { setProductType, deleteProductType } from './System.service';
 
 export default {
     name: 'ProTypeManage',
@@ -156,6 +156,18 @@ export default {
                                     _this.modal = true;
                                     _this.edit = true;
                                 }} class="edit">修改</span>
+                              <span  onClick={() => {
+                              _this.$Modal.confirm({
+                                  title: '系统提示',
+                                  content: `<p>确定删除吗？</p>`,
+                                  onOk: async ()=>{
+                                     const { code, msg } = await  deleteProductType({productTypeId: this.row.id})
+                                    if(code === 10000){
+                                      _this .getProductTypeList({level:0})
+                                    }
+                                  }
+                                })
+                             }} class="edit">删除</span>
                             </div>
                         )
                     }

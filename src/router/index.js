@@ -40,6 +40,14 @@ const router = new Router({
           }
         },
         {
+          path: '/Base/AddOrgan',
+          name: 'AddOrgan',
+          component: () => import('@/components/Base/AddOrgan'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
           path: '/Base/AddArtProduct',
           name: 'AddArtProduct',
           component: () => import('@/components/Base/AddArtProduct'),
@@ -59,6 +67,47 @@ const router = new Router({
           path: '/Base/RelateArticle',
           name: 'RelateArticle',
           component: () => import('@/components/Base/RelateArticle'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/Base/RelateSignedArtist',
+          name: 'RelateSignedArtist',
+          component: () => import('@/components/Base/RelateSignedArtist'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/Base/RelateArtistExhibition',
+          name: 'RelateArtistExhibition',
+          component: () => import('@/components/Base/RelateArtistExhibition'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/Content/RelateExhibitionArtist',
+          name: 'RelateExhibitionArtist',
+          component: () =>
+            import('@/components/Content/RelateExhibitionArtist'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/Base/RelateCollect',
+          name: 'RelateCollect',
+          component: () => import('@/components/Base/RelateCollect'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/Base/RelateExhibition',
+          name: 'RelateExhibition',
+          component: () => import('@/components/Base/RelateExhibition'),
           meta: {
             requiresAuth: true
           }
@@ -268,6 +317,14 @@ const router = new Router({
           path: '/Brand',
           name: 'Brand',
           component: () => import('@/components/Museum/Brand/Brand'),
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/Youth',
+          name: 'Youth',
+          component: () => import('@/components/Activity/Youth/Youth'),
           meta: {
             requiresAuth: true
           }

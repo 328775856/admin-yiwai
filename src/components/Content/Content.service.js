@@ -22,9 +22,19 @@ const getProductStatisticsList = data =>
   request.post('getProductStatisticsList/v1', data)
 
 const batchSetExhibits = data => request.post('batchSetExhibits/v1', data)
-const getExhibitionTickets = data => request.post('getExhibitionTickets/v1', data)
+const getExhibitionArtistList = data =>
+  request.post('getExhibitionArtistList/v1', data)
+const deleteExhibitionArtist = data =>
+  request.post('deleteExhibitionArtist/v1', data)
+const setExhibitionArtist = data => request.post('setExhibitionArtist/v1', data)
+const getArtistStatisticsList = data =>
+  request.post('getArtistStatisticsList/v1', data)
+
+const getExhibitionTickets = data =>
+  request.post('getExhibitionTickets/v1', data)
 const setExhibitionTicket = data => request.post('setExhibitionTicket/v1', data)
-const deleteExhibitionTickets = data => request.post('deleteExhibitionTickets/v1', data)
+const deleteExhibitionTickets = data =>
+  request.post('deleteExhibitionTickets/v1', data)
 export {
   getArticleList,
   setArticle,
@@ -41,6 +51,10 @@ export {
   deleteExhibits,
   getProductStatisticsList,
   batchSetExhibits,
+  getArtistStatisticsList,
+  deleteExhibitionArtist,
+  setExhibitionArtist,
+  getExhibitionArtistList,
   getExhibitionTickets,
   setExhibitionTicket,
   deleteExhibitionTickets

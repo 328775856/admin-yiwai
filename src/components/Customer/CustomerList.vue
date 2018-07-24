@@ -175,7 +175,6 @@ export default {
             return (
               <div>
               <p>{this.customerTypeList[customerDto.type-1]}</p>
-              <p class="edit">{this.itemName[this.artistId]}</p>
               </div>
           );
           }
@@ -325,7 +324,6 @@ export default {
       this.itemName[this.artistId] = item.value;
     },
     ok () {
-      this.$Message.info('设置成功');
       const postData = {
         bindId: this.artistId,
         customerId: this.rowData.customerDto.id,
@@ -334,6 +332,7 @@ export default {
       setCustomerType(postData).then((res)=>{
         if(res.code === 10000) {
           this.getCustomerList();
+          this.$Message.info('设置成功');
         }
       })
 

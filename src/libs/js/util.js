@@ -115,6 +115,6 @@ util.debounce = function(func, wait) {
   }
 }
 util.versions = () => {
-  return 'v3.0'
+  return 'v3.1'
 }
 export default util

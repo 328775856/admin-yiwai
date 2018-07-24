@@ -257,7 +257,9 @@ export default {
       console.log(this.$route.params.data)
       const { itemType } = this.$route.params.data
       const data = this.$route.params.data
-
+      if (data.imageUrl) {
+        this.isUploadOk = true
+      }
       if (itemType == 1) {
         for (let item in data) {
           this.pictureForm['picture' + item] = data[item]

@@ -577,10 +577,7 @@ export default {
     }
   },
   mounted() {
-    this.getDictionaryList()
-    this.getArticleList()
-    this.getHomePageStatisticsList()
-    this.getExhibitionList()
+     this.getExhibitionList()
   },
   methods: {
     getName(name) {

@@ -94,8 +94,8 @@
              @on-cancel="cancel">
         <FormItem label="请选择" class="formItem100">
           <RadioGroup v-model="type">
-            <Radio label="音频"></Radio>
             <Radio label="视频"></Radio>
+            <Radio label="音频"></Radio>
           </RadioGroup>
         </FormItem>
         <FormItem label="相关图片" prop="videoImage" class="formItem100">
@@ -364,7 +364,8 @@
         modal1: false,
         rowId: '',
         isNew: false,
-        loading: true
+        loading: true,
+        mediaUrl: ''
       }
     },
     created() {
@@ -549,10 +550,15 @@
         this.$refs[name].resetFields();
       },
       setProductMedia(id) {
+        if(this.type === '视频'){
+          this.mediaUrl =  this.formValidate.videoUrl
+        }else{
+          this.mediaUrl = this.formValidate.voiceUrl
+        }
         const postData = {
           id: id || 0,
           productId: this.$route.params.data.id,
-          mediaUrl: this.formValidate.videoUrl || this.formValidate.voiceUrl,
+          mediaUrl: this.mediaUrl,
           mediaImage: this.formValidate.videoImage,
           mediaTitle: this.mediaTitle,
           type: this.typeList.indexOf(this.type)+1
@@ -573,11 +579,6 @@
           this.loading = false;
           this.$nextTick(() => {
             this.$refs[name].validate(async (valid) => {
-              // if(valid === false){
-              //   setTimeout(function(){
-              //     this.modal1 = false
-              //   },3000)
-              // }
               if (valid) {
                 if(this.isNew === true){
                   this.setProductMedia(0)
@@ -592,22 +593,6 @@
             this.loading = true;
           });
         }, 1000);
-        // this.$refs[name].validate(async (valid) => {
-        //   // if(valid === false){
-        //   //   setTimeout(function(){
-        //   //     this.modal1 = false
-        //   //   },3000)
-        //   // }
-        //   if (valid) {
-        //     if(this.isNew === true){
-        //       this.setProductMedia(0)
-        //       this.$Message.info('新增成功');
-        //     }else{
-        //       this.setProductMedia(this.rowId)
-        //       this.$Message.info('修改成功');
-        //     }
-        //   }
-        // })
       },
       cancel () {
       },

@@ -334,22 +334,22 @@ const router = new Router({
   ]
 })
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     const isLogIn = sessionStorage.getItem('isLogin')
-//     if (isLogIn != 1) {
-//       next({
-//         path: '/Login',
-//         query: {
-//           redirect: to.fullPath
-//         }
-//       })
-//     } else {
-//       next()
-//     }
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    const isLogIn = sessionStorage.getItem('isLogin')
+    if (isLogIn != 1) {
+      next({
+        path: '/Login',
+        query: {
+          redirect: to.fullPath
+        }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
 
 export default router

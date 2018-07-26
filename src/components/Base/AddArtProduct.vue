@@ -91,7 +91,7 @@
              title="新增媒体文件"
              @on-ok="ok('formValidate')"
              :loading="loading"
-             @on-cancel="cancel">
+             @on-cancel="cancel" id="productModal">
         <FormItem label="请选择" class="formItem100">
           <RadioGroup v-model="type">
             <Radio label="视频"></Radio>
@@ -184,19 +184,19 @@
     },
     data() {
       const validateVideoUrl= (rule,value,callback) => {
-        if (value === '') {
+        if (value === ''&& this.modal1 === true) {
           callback(new Error('地址不能为空 '));
         };
-        if (value.indexOf('mp4') === -1) {
+        if (value.indexOf('mp4') === -1&& this.modal1 === true) {
           callback(new Error('请输入视频文件 '));
         };
         callback()
       }
       const validateVoiceUrl= (rule,value,callback) => {
-        if (value === '') {
+        if (value === ''&& this.modal1 === true) {
           callback(new Error('地址不能为空 '));
         };
-        if (value.indexOf('mp3') === -1) {
+        if (value.indexOf('mp3') === -1&& this.modal1 === true) {
           callback(new Error('请输入音频文件 '));
         };
         callback()
@@ -260,13 +260,13 @@
             {required: true, message: '艺术品介绍不能为空', trigger: 'blur'},
           ],
           voiceUrl: [
-            {required: true,validator:validateVoiceUrl,  trigger: 'blur'},
+            {required: false,validator:validateVoiceUrl,  trigger: 'blur'},
           ],
           videoUrl: [
-          {required: true, validator: validateVideoUrl, trigger: 'blur'},
+          {required: false, validator: validateVideoUrl, trigger: 'blur'},
         ],
           videoImage:[
-            {required: true,message: '图片不能为空', trigger: 'blur'},
+            {required: false,message: '图片不能为空', trigger: 'blur'},
           ]
         },
         proTypeData: [],
@@ -527,6 +527,7 @@
       },
       save(name) {
         this.$refs[name].validate(async (valid) => {
+        //  alert(valid)
           if (valid) {
             // 提交前将富文本图片上传至七牛云
             // this.formValidate.proDescription
@@ -578,6 +579,9 @@
         setTimeout(() => {
           this.loading = false;
           this.$nextTick(() => {
+            if(this.modal1 === true){
+              this.ruleValidate.videoImage[0].required = true
+            }
             this.$refs[name].validate(async (valid) => {
               if (valid) {
                 if(this.isNew === true){
@@ -595,6 +599,7 @@
         }, 1000);
       },
       cancel () {
+        this.ruleValidate.videoImage[0].required = false
       },
       addNew(){
         this.modal1 = true
@@ -639,16 +644,16 @@
   }
 </style>
 <style>
-  .ivu-table-cell .img{
+  #productModal .ivu-table-cell .img{
     width: 77px;
     height: 100px;
   }
-  .ivu-modal .ivu-form-item-content{
+  #productModal .ivu-modal .ivu-form-item-content{
     width: 400px!important;
     display: inline-block!important;
     margin-left: 20px!important;
   }
-  .ivu-modal .ivu-form-item-label{
+  #productModal .ivu-modal .ivu-form-item-label{
     width: 60px!important;
     display: inline-block!important;
     text-align: right;

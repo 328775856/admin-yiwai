@@ -26,10 +26,11 @@
         <RadioGroup v-model="customerType">
           <Radio label="艺术家"></Radio>
           <Radio label="机构"></Radio>
+          <Radio label="个人"></Radio>
         </RadioGroup>
       </div>
       <div class="flex-row">
-        <div>选择{{customerType}}：</div>
+        <div v-show="customerType !== '个人'">选择{{customerType}}：</div>
         <EySelectsearch v-show="customerType == '机构'" ref="eySelectsearch" url="/getOrganStatisticsList/v1" name="name" resultList="data" :postData="{searchInfo: {  name: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['id','name']" placeHolder="请选择" @getItem="getItem">
         </EySelectsearch>
         <EySelectsearch  v-show="customerType == '艺术家'" ref="eySelectsearch" url="/getArtistStatisticsList/v1" name="artistName" resultList="artistList" :postData="{searchInfo: { artistName: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['artistId','artistDto.name']" placeHolder="请选择" @getItem="getItem">
@@ -214,6 +215,11 @@ export default {
     // 设置searchInfo
     this.getCustomerList();
   },
+  watch:{
+    customerType(val){
+      this.artistId = undefined
+    }
+  },
   methods: {
     getCustomerList() {
       const postData = {
@@ -324,6 +330,13 @@ export default {
       this.itemName[this.artistId] = item.value;
     },
     ok () {
+      if(this.customerType === '个人'){
+        this.artistId = 0
+      }
+      if(this.artistId === undefined){
+        this.$Message.info(`请选择具体或其他${this.customerType}`)
+        return
+      }
       const postData = {
         bindId: this.artistId,
         customerId: this.rowData.customerDto.id,

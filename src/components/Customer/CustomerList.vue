@@ -18,8 +18,6 @@
     <SetCustomer :pIsShowModel="pIsShowModel" :pIsAdd="pIsAdd" :pIsLook="pIsLook" :pCustomerInfo="pCustomerInfo" @updatepCustomerInfo="()=>pCustomerInfo={}" @updatepIsShowModel="val=>pIsShowModel=val"></SetCustomer>
     <Modal
       title="设置认证"
-      @on-ok="ok"
-      @on-cancel="cancel"
       v-model="modal1">
       <div>
         认证类型：
@@ -35,6 +33,10 @@
         </EySelectsearch>
         <EySelectsearch  v-show="customerType == '艺术家'" ref="eySelectsearch" url="/getArtistStatisticsList/v1" name="artistName" resultList="artistList" :postData="{searchInfo: { artistName: '' },pageNo: 0,pageSize: 10,sortField: '',sort: ''}" :kv="['artistId','artistDto.name']" placeHolder="请选择" @getItem="getItem">
         </EySelectsearch>
+      </div>
+      <div slot="footer">
+        <Button type="primary" @click="ok">确定</Button>
+        <Button type="text" @click="cancel">取消</Button>
       </div>
     </Modal>
   </div>
@@ -330,6 +332,7 @@ export default {
       this.itemName[this.artistId] = item.value;
     },
     ok () {
+      alert(document.cookie)
       if(this.customerType === '个人'){
         this.artistId = 0
       }
@@ -345,12 +348,14 @@ export default {
       setCustomerType(postData).then((res)=>{
         if(res.code === 10000) {
           this.getCustomerList();
+          this.modal1 = false
           this.$Message.info('设置成功');
         }
       })
 
     },
     cancel () {
+      this.modal1 = false
     }
   }
 };

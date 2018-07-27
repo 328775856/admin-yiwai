@@ -85,45 +85,47 @@
       <FormItem label="艺术品介绍" prop="proDescription" class="formItem100">
         <EyQuill @content-change="contentChange" :editContent="formValidate.proDescription"/>
       </FormItem>
-      <FormItem label="艺术品介绍" prop="proDescription" class="formItem100">
+      <FormItem label="艺术品介绍" prop="proDescription" class="formItem100 ">
       </FormItem>
-      <Modal v-model="modal1"
-             title="新增媒体文件"
-             @on-ok="ok('formValidate')"
-             :loading="loading"
-             @on-cancel="cancel" id="productModal">
-        <FormItem label="请选择" class="formItem100">
-          <RadioGroup v-model="type">
-            <Radio label="视频"></Radio>
-            <Radio label="音频"></Radio>
-          </RadioGroup>
-        </FormItem>
-        <FormItem label="相关图片" prop="videoImage" class="formItem100">
-          <EyUpload @upload-ok="getVideoImgUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize"
-                    imgSizeText="封面图片规格：高422px,宽750px" accept="image/jpeg,image/jpg,image/png"/>
-          <p v-show="isVideoUploadOk" class="imageP">
+      <div v-show="show">
+        <Modal v-model="modal1"
+               title="新增媒体文件"
+               @on-ok="ok('formValidate')"
+               :loading="loading"
+               @on-cancel="cancel" id="productModal">
+          <FormItem label="请选择" class="formItem100">
+            <RadioGroup v-model="type">
+              <Radio label="视频"></Radio>
+              <Radio label="音频"></Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem label="相关图片" prop="videoImage" class="formItem100">
+            <EyUpload @upload-ok="getVideoImgUrl" @upload-error="uploadError" @upload-exceeded-size="uploadExceededSize"
+                      imgSizeText="封面图片规格：高422px,宽750px" accept="image/jpeg,image/jpg,image/png"/>
+            <p v-show="isVideoUploadOk" class="imageP">
           <span class="imageSpan">
           <Icon type="close-circled" size="18" class="imageIcon" @click.native="resetImg('videoImage')"></Icon>
           <img :src="formValidate.videoImage+'?imageView2/1/w/135/h/165/q/50'" class="img">
           </span>
-          </p>
+            </p>
+          </FormItem>
+          <FormItem label="相关视频" prop="videoUrl" class="formItem100 upload" v-if="type ==='视频'">
+            <Input v-model="formValidate.videoUrl" placeholder="输入视频链接地址" clearable :maxlength="200"/>
+            <router-link :to="{ path: '/Video'}" target="_blank">上传视频</router-link>
+          </FormItem>
+          <FormItem label="相关音频" prop="voiceUrl" class="formItem100 upload" v-if="type ==='音频'">
+            <Input v-model="formValidate.voiceUrl" placeholder="输入音频链接地址" clearable :maxlength="200"/>
+            <router-link :to="{ path: '/Video'}" target="_blank">上传音频</router-link>
+          </FormItem>
+          <FormItem label="标题" class="formItem100">
+            <Input v-model="mediaTitle"  placeholder="输入作品标签，按回车键添加标签"/>
+          </FormItem>
+        </Modal>
+        <FormItem label="媒体文件" class="formItem100 media">
+          <Table :data="ProductMediaData.mediaList" :columns="ProductMediacolumns" border></Table>
+          <Button style="margin-top: 30px " class="addTicket" type="primary" @click="addNew">新增</Button>
         </FormItem>
-        <FormItem label="相关视频" prop="videoUrl" class="formItem100 upload" v-if="type ==='视频'">
-          <Input v-model="formValidate.videoUrl" placeholder="输入视频链接地址" clearable :maxlength="200"/>
-          <router-link :to="{ path: '/Video'}" target="_blank">上传视频</router-link>
-        </FormItem>
-        <FormItem label="相关音频" prop="voiceUrl" class="formItem100 upload" v-if="type ==='音频'">
-          <Input v-model="formValidate.voiceUrl" placeholder="输入音频链接地址" clearable :maxlength="200"/>
-          <router-link :to="{ path: '/Video'}" target="_blank">上传音频</router-link>
-        </FormItem>
-        <FormItem label="标题" class="formItem100">
-          <Input v-model="mediaTitle"  placeholder="输入作品标签，按回车键添加标签"/>
-        </FormItem>
-      </Modal>
-      <FormItem label="媒体文件" class="formItem100">
-        <Table :data="ProductMediaData.mediaList" :columns="ProductMediacolumns" border></Table>
-        <Button style="margin-top: 30px " class="addTicket" type="primary" @click="addNew">新增</Button>
-      </FormItem>
+      </div>
       <FormItem class="formItem100 btn">
         <Button type="primary" @click="save('formValidate')">保存</Button>
         <Button type="ghost" @click="goBack('1')" style="margin-left: 8px">取消并返回</Button>
@@ -365,7 +367,8 @@
         rowId: '',
         isNew: false,
         loading: true,
-        mediaUrl: ''
+        mediaUrl: '',
+        show: false
       }
     },
     created() {
@@ -374,6 +377,12 @@
       // 判断是新增or编辑页面（有参数为编辑，否则为新增）
       const data = this.$route.params.data;
       if (data) {
+        this.show = true
+        getProductMediaList({productId: this.$route.params.data.id}).then((res)=>{
+          if(res.code === 10000){
+            this.ProductMediaData = res.data
+          }
+        })
         for (let item in data) {
           if (data.hasOwnProperty(item) && this.formValidate.hasOwnProperty(item)) {//筛选过滤赋值formValidate
             this.formValidate[item] = data[item]
@@ -499,11 +508,6 @@
       },
       async getProductTypeList({level = 0}) {
         const {data: {productTypeList}} = await getProductTypeList({level});
-        getProductMediaList({productId: this.$route.params.data.id}).then((res)=>{
-          if(res.code === 10000){
-            this.ProductMediaData = res.data
-          }
-        })
         this.productTypeList = productTypeList;//产品类型总数据
         this.proTypeData = productTypeList.map((item, index) => {
           const proTypeData =
@@ -644,7 +648,7 @@
   }
 </style>
 <style>
-  #productModal .ivu-table-cell .img{
+  .media .ivu-table-cell .img{
     width: 77px;
     height: 100px;
   }

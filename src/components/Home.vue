@@ -79,6 +79,11 @@
               </template>
               <MenuItem name="4-1">青年活动</MenuItem>
           </Submenu>
+          <!--博物馆-->
+          <MenuItem name="1-9">
+            <Icon type="settings"></Icon>
+            <span>博物馆</span>
+          </MenuItem>
           <!-- <Submenu name="2">
             <template slot="title">
               <Icon type="ios-location"></Icon>
@@ -145,6 +150,7 @@ export default {
         '1-6': '/Customer',
         '1-8': '/Video',
         '1-7': '/System',
+        '1-9': '/Museum',
         // 艺术地图
         '2-1': '/City',
         '2-2': '/Faction',

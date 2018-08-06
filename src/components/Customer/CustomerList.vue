@@ -332,7 +332,6 @@ export default {
       this.itemName[this.artistId] = item.value;
     },
     ok () {
-      alert(document.cookie)
       if(this.customerType === '个人'){
         this.artistId = 0
       }

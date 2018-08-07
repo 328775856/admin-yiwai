@@ -5,14 +5,14 @@
           <legend>查询条件</legend>
           <div class="search">
             <div>
-              <label for="city">城市：</label>
-              <Input id="city" v-model="city" placeholder="输入城市" clearable style="width: 180px" />
+              <label for="city">展览名：</label>
+              <Input id="city" v-model="ExhibitionName" placeholder="输入展览名" clearable style="width: 180px" />
             </div>
-            <div>
-              <label for="museum">博物馆：</label>
-              <Input id="museum" v-model="museumName" placeholder="输入博物馆" clearable style="width: 180px" />
-            </div>
-            <Button type="primary" icon="ios-search" @click="search('art')">查询</Button>
+            <!--<div>-->
+              <!--<label for="museum">博物馆id：</label>-->
+              <!--<Input id="museum" v-model="museumId" placeholder="输入博物馆id" clearable style="width: 180px" />-->
+            <!--</div>-->
+            <Button type="primary" icon="ios-search" @click="search">查询</Button>
           </div>
         </fieldset>
       </div>
@@ -32,37 +32,13 @@ export default {
     name: 'Brand',
     components: { Table, Button,Page,Col,Row,Modal,Input,Breadcrumb ,BreadcrumbItem,Form,FormItem,Icon,RadioGroup,Radio},
     data() {
-        return {
+      let that = this;
+      return {
           city: '',
           museumName: '',
-          artData: {},
-          isUploadOk:false,
-          isLitUploadOk:false,
+          ExhibitionName: '',
+          museumId:  '',
           dataList:[],
-          formValidate: {
-              id:0,
-              url: '',
-              name: '',
-              isExclusive:'否',
-              type:4
-		    	},
-          ruleValidate: {
-            url: [{ required: true, message: "图片不能为空", trigger: "blur" }],
-            name: [
-              { required: true, message: "品牌名称不能为空", trigger: "blur" }
-            ],
-            isExclusive: [{ required: true, message: "请选择是否独家冠名", trigger: "blur" }]
-          },
-          nameList:[
-            {
-              value:"是",
-              label:"是"
-            },{
-              value:"否",
-              label:"否"
-            }
-          ],
-          cIsShowModel:false,
           loading:true,
           currentPage:1,
           totalItems:0,
@@ -97,7 +73,19 @@ export default {
             {
               title: '简介',
               key: 'description',
-              align:'center'
+              align:'center',
+              render:function(h,params){
+                if(params.row.description){
+
+                }
+                return (<div onClick={()=>{
+                  that.$Modal.info({
+                    title: '简介详情',
+                    content: params.row.description
+                  })
+                }
+              }>{params.row.description?params.row.description.slice(0,20)+ '...': '暂无'}</div>)
+              }
             },
             {
               title: '标题',
@@ -107,7 +95,15 @@ export default {
             {
               title: 'logo图',
               key: 'placardUrl',
-              align:'center'
+              align:'center',
+              width: '200',
+              render:function(h,params){
+                if(params.row.placardUrl){
+                  return (<img class='img' src={params.row.placardUrl}/>)
+                }else{
+                  return (<div>暂无</div>)
+                }
+              }
             },
             {
               title: '时间',
@@ -138,15 +134,34 @@ export default {
     methods: {
       async getDataList(){
         const params = {
+          searchInfo: JSON.stringify({museumId: this.$route.query.id,ExhibitionName: ''}),
           pageNo:this.pageNo,
           pageSize:this.pageSize,
-          type:4
+          sortField: '',
+          sort: ''
         }
         const {code, msg, data} = await getBwgExhibitionList(params)
         if(code ===10000 || code==='10000') {
           this.loading = false;
-          this.dataList = data.resourceInfoList;
-          this.totalItems = data.totalItems;
+          this.dataList = data.data;
+          this.totalItems = data.totalPages;
+        }else{
+          this.$Message.error(msg);
+        }
+      },
+      async search(){
+        const params = {
+          searchInfo: JSON.stringify({museumId: this.$route.query.id,exhibitionName: this.ExhibitionName}),
+          pageNo:this.pageNo,
+          pageSize:this.pageSize,
+          sortField: '',
+          sort: ''
+        }
+        const {code, msg, data} = await getBwgExhibitionList(params)
+        if(code ===10000 || code==='10000') {
+          this.loading = false;
+          this.dataList = data.data;
+          this.totalItems = data.totalPages;
         }else{
           this.$Message.error(msg);
         }
@@ -267,6 +282,10 @@ export default {
 }
   .edit{
     color: blue;
+  }
+  .img{
+    width:150px;
+    height: 150px;
   }
 </style>
 

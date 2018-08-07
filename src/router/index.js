@@ -344,6 +344,14 @@ const router = new Router({
           meta: {
             requiresAuth: true
           }
+        },
+        {
+          path: '/Production',
+          name: 'Production',
+          component: () => import('@/components/Museum/Index/Production'),
+          meta: {
+            requiresAuth: true
+          }
         }
       ]
     }

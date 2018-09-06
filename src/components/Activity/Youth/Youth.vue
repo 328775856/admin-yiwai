@@ -290,7 +290,7 @@ export default {
       }
     },
     search() {
-      this.pPageNo = 1
+      this.pPageNo = 1                        
       this.currentPageProduct = 1
       this.getYouthProductList()
     },

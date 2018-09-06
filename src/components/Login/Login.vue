@@ -65,6 +65,7 @@ export default {
           // 存入cookie
           sessionStorage.setItem('isLogin', 1);
           sessionStorage.setItem('userName', userName);
+          sessionStorage.setItem('role',2)
           // 路由跳转
           this.$router.push({ path: `${this.redirect}` });
         } else if (+code == 10001) {

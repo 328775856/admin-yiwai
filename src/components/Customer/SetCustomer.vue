@@ -79,7 +79,7 @@
             {{customerInfo.city||'无'}}
           </p>
         </FormItem>
-        <!-- <FormItem label="是否官方" prop="isOfficial">
+         <FormItem label="是否官方" prop="isOfficial">
           <RadioGroup v-if="!pIsLook" v-model="customerInfo.isOfficial">
             <Radio :label="1">是</Radio>
             <Radio :label="0">否</Radio>
@@ -87,7 +87,7 @@
           <p v-else>
             {{customerInfo.isOfficial==1?'是':'否'}}
           </p>
-        </FormItem> -->
+        </FormItem>
       </Form>
       <div slot="footer">
         <Button type="text" @click="()=>this.isShowModel=false">取消</Button>
@@ -173,7 +173,7 @@ export default {
         // country: '',
         // province: '',
         // city: '',
-        // isOfficial: 0
+         isOfficial: 1
       },
       ruleValidate: {
         avatarUrl: [
@@ -252,7 +252,7 @@ export default {
         country: '',
         province: '',
         city: '',
-        isOfficial: 0
+        isOfficial: this.customerInfo.isOfficial
       }, this.pCustomerInfo);
     },
     handleSubmit(name) {

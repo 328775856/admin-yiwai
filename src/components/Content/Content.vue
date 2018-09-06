@@ -577,7 +577,7 @@ export default {
     }
   },
   mounted() {
-     this.getExhibitionList()
+    this.getExhibitionList()
   },
   methods: {
     getName(name) {

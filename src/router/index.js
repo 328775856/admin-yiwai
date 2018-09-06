@@ -330,28 +330,17 @@ const router = new Router({
           }
         },
         {
-          path: '/Museum',
-          name: 'Museum',
-          component: () => import('@/components/Museum/Index'),
+          path: '/addLongComment',
+          name: 'addLongComment',
+          component: () => import('@/components/Comment/AddLongComment'),
           meta: {
             requiresAuth: true
           }
         },
         {
-          path: '/Exhibition',
-          name: 'Exhibition',
-          component: () => import('@/components/Museum/Index/Exhibition'),
-          meta: {
-            requiresAuth: true
-          }
-        },
-        {
-          path: '/Production',
-          name: 'Production',
-          component: () => import('@/components/Museum/Index/Production'),
-          meta: {
-            requiresAuth: true
-          }
+          path: '/Fall',
+          name: 'Fall',
+          component: () => import('@/components/Activity/Fall/Fall')
         }
       ]
     }
@@ -359,6 +348,8 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  const role = sessionStorage.getItem('role')
+
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const isLogIn = sessionStorage.getItem('isLogin')
     if (isLogIn != 1) {
@@ -370,6 +361,12 @@ router.beforeEach((to, from, next) => {
       })
     } else {
       next()
+      // if (to.name === 'Comment' && role === '1') {
+      //   router.back()
+      //   console.log('2123')
+      //   console.log(to.name)
+      //   console.log(from.name)
+      // }
     }
   } else {
     next()

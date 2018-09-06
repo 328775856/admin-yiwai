@@ -119,7 +119,7 @@ export default {
         },
         {
           title: '展览编号',
-          key: 'exhibitionId', 
+          key: 'exhibitionId',
           align: 'center',
           width: 100
         },

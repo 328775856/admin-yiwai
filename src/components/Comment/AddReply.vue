@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import { Button, Input, Form, FormItem, Modal } from 'iview';
-import { addComment, addReply } from './Comment.service';
-import EySelectsearch from '../Common/EySelectsearch.vue';
+import { Button, Input, Form, FormItem, Modal } from 'iview'
+import { addComment, addReply } from './Comment.service'
+import EySelectsearch from '../Common/EySelectsearch.vue'
 export default {
   name: 'AddReply',
   data() {
@@ -42,25 +42,23 @@ export default {
         nickName: [
           { required: true, message: '昵称不能为空', trigger: 'blur' }
         ],
-        content: [
-          { required: true, message: '内容不能为空', trigger: 'blur' }
-        ]
+        content: [{ required: true, message: '内容不能为空', trigger: 'blur' }]
       }
     }
   },
   components: { Button, Input, Form, FormItem, Modal, EySelectsearch },
   props: {
     pIsShowModel: {
-      default: false,
+      default: false
     },
     pReplyInfo: {
       default() {
-        return {};
+        return {}
       }
     },
     pCommentInfo: {
       default() {
-        return {};
+        return {}
       }
     },
     pIndex: {
@@ -79,31 +77,31 @@ export default {
   },
   watch: {
     pIsShowModel(newValue) {
-      this.isShowModel = newValue;
+      this.isShowModel = newValue
     },
     isShowModel(newValue) {
       if (!newValue) {
-        this.$refs['formValidate'].resetFields();
-        this.$refs['eySelectsearch'].reset();
+        this.$refs['formValidate'].resetFields()
+        this.$refs['eySelectsearch'].reset()
       }
-      this.$emit('updatepIsShowModel', newValue);
+      this.$emit('updatepIsShowModel', newValue)
     },
     pIndex(newValue) {
-      this.index = newValue;
+      this.index = newValue
     }
   },
   methods: {
     getItem(item) {
-      console.log(item);
-      this.customerId = item.key;
-      this.replyInfo.nickName = item.value;
+      console.log(item)
+      this.customerId = item.key
+      this.replyInfo.nickName = item.value
     },
     handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
+      this.$refs[name].validate(valid => {
         if (valid) {
-          this.addReply();
+          this.addReply()
         } else {
-          this.$Message.error('添加评论失败！');
+          this.$Message.error('添加评论失败！')
         }
       })
     },
@@ -114,45 +112,43 @@ export default {
      * @param {Int} commentType 1:添加作品评论 2.其他
      */
     addReply(postData) {
-      console.log(this.commentType, 'commentType');
+      console.log(this.commentType, 'commentType')
       if (this.commentType == 1) {
         const postData = Object.assign({}, this.pCommentInfo, {
           customerId: this.customerId,
+          title: '',
           content: this.replyInfo.content
-        });
+        })
         addComment(postData).then(({ code }) => {
           if (code == '10000') {
-            this.$Message.success('添加评论成功！');
+            this.$Message.success('添加评论成功！')
             // 刷新列表页
-            this.$parent.getCommentList();
-            this.isShowModel = false;
+            this.$parent.getCommentList()
+            this.isShowModel = false
           } else {
-            this.$Message.error('添加评论失败！');
+            this.$Message.error('添加评论失败！')
           }
-        });
+        })
       } else {
         const postData = Object.assign({}, this.pReplyInfo, {
           customerId: this.customerId,
           content: this.replyInfo.content
-        });
+        })
         addReply(postData).then(({ code }) => {
           if (code == '10000') {
-            this.$Message.success('添加回复成功！');
+            this.$Message.success('添加回复成功！')
             // 刷新列表页
-            this.$parent.getCommentList();
-            this.$emit('resetReplyList', this.index);
-            this.isShowModel = false;
+            this.$parent.getCommentList()
+            this.$emit('resetReplyList', this.index)
+            this.isShowModel = false
           } else {
-            this.$Message.error('添加回复失败！');
+            this.$Message.error('添加回复失败！')
           }
-        });
+        })
       }
     }
-
-
   }
 }
-
 </script>
 
 <style lang="less">

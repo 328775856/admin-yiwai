@@ -139,6 +139,7 @@ export default {
   data() {
     let _this = this
     return {
+      role:'',
       loading1: true,
       loading2: true,
       labelList: ['艺术家库', '艺术品库', '机构'],
@@ -226,6 +227,7 @@ export default {
           sortType: '',
           render: (h, params) => {
             const { artistId, commentNum } = params.row
+            if(this.role !== '1'){
             return (
               <div>
                 <p>{commentNum}</p>
@@ -242,6 +244,9 @@ export default {
                 </a>
               </div>
             )
+            }else{
+              return(<p>{commentNum}</p>)
+            }
           }
         },
         {
@@ -481,7 +486,33 @@ export default {
             const data = params.row.productDto
             const productId = params.row.productId
             const { id } = params.row.productDto
-            return (
+            // return h('div',  [
+            //   h('span',{
+            //     'class': {
+            //       edit: true
+            //     },
+            //     domProps: {
+            //       innerHTML: '复制链接'
+            //     }, on:{click:()=>{this.$router.push({
+            //         name: 'AddArtProduct',
+            //         params: { data }
+            //       })}}
+            //   }),
+            //     h('span',{
+            //       'class': {
+            //         edit: true
+            //       },
+            //       domProps: {
+            //         innerHTML: '编辑'
+            //       }, on:{click:()=>{this.$router.push({
+            //           name: 'AddArtProduct',
+            //           params: { data }
+            //         })}}
+            //     }),
+            //   ]
+            // )
+            if(this.role !== '1'){
+              return (
               <div>
                 <span
                   onClick={() =>
@@ -503,17 +534,43 @@ export default {
                 </span>
                 <span
                   class="edit"
-                  onClick={() =>
-                    this.$router.push({
+                  onClick={() =>{
+              this.$router.push({
                       path: '/Comment',
                       query: { productId }
                     })
+                  }
                   }
                 >
                   查看评论
                 </span>
               </div>
             )
+          }
+          else{
+              return (
+                <div>
+                <span
+              onClick={() =>
+              this.$router.push({
+                name: 'AddArtProduct',
+                params: { data }
+              })
+            }
+            class="edit"
+                >
+                编辑
+                </span>
+                <span
+            class="edit"
+              v-clipboard={`pages/Picture/Detail?id=${id}`}
+              onSuccess={e => this.$Message.success('复制成功')}
+            >
+              复制链接
+              </span>
+              </div>
+            )
+            }
           }
         }
       ],
@@ -657,6 +714,7 @@ export default {
     }
   },
   created() {
+    this.role = sessionStorage.getItem('role')
     const { params, query } = this.$route
     console.log(this.$route)
     if (params.tab === '0' || query.tab == 0) {

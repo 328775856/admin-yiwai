@@ -71,6 +71,7 @@ export default {
       getUserList(postData).then(({ data: { userList, totalPages } }) => {
         this.loading = false;
         this.userList = userList;
+        console.log(this.userList[0].gmtCreate)
       });
     },
     addUser() {

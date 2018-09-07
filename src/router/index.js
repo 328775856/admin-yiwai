@@ -10,6 +10,11 @@ const router = new Router({
       component: () => import('@/components/Login/Login')
     },
     {
+      path: '/Error',
+      name: 'Error',
+      component: () => import('@/components/Error')
+    },
+    {
       path: '/',
       name: 'Home',
       component: () => import('@/components/Home'),
@@ -348,25 +353,26 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  const role = sessionStorage.getItem('role')
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const isLogIn = sessionStorage.getItem('isLogin')
-    if (isLogIn != 1) {
+    if (isLogIn !== '1') {
       next({
         path: '/Login',
-        query: {
-          redirect: to.fullPath
-        }
+        // query: {
+        //   redirect: to.fullPath
+        // }
       })
     } else {
       next()
-      // if (to.name === 'Comment' && role === '1') {
-      //   router.back()
-      //   console.log('2123')
-      //   console.log(to.name)
-      //   console.log(from.name)
-      // }
+      // 获取登录后的角色信息
+      const role = sessionStorage.getItem('role')
+      // 注册后传入相关权限数组
+      let arr = ['Index', 'Base','Video','System','Museum','Youth','Fall']
+        // 拦截跳转路由
+        if (arr.indexOf(to.name)=== -1 && role === '1') {
+          router.replace({path: '/Error'})
+        }
     }
   } else {
     next()

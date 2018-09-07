@@ -43,7 +43,7 @@
         <Menu :active-name="active"
               theme="dark"
               width="auto"
-              :open-names="['1']"
+              :open-names="menuActive"
               @on-select="onSelect">
           <MenuItem name="1-1">
             <Icon type="document"></Icon>
@@ -60,17 +60,17 @@
             <span>内容管理</span>
           </MenuItem>
 
-          <MenuItem name="1-4"  v-if="role !=='1'">
+          <MenuItem name="1-4" v-if="role !=='1'">
             <Icon type="edit"></Icon>
             <span>首页管理</span>
           </MenuItem>
 
-          <MenuItem name="1-5"  v-if="role !=='1'">
+          <MenuItem name="1-5" v-if="role !=='1'">
             <Icon type="quote"></Icon>
             <span>评论管理</span>
           </MenuItem>
 
-          <MenuItem name="1-6"   v-if="role !=='1'">
+          <MenuItem name="1-6" v-if="role !=='1'">
             <Icon type="person"></Icon>
             <span>用户管理</span>
           </MenuItem>
@@ -149,6 +149,7 @@
     name: 'Home',
     data() {
       return {
+        menuActive: ['1'],
         versions: util.versions(),
         routerObj: {
           '1-1': '/Index',
@@ -189,6 +190,14 @@
       }
     },
     created() {
+      // 刷新后保持菜单路由
+      for (let key in this.routerObj) {
+        if (this.routerObj['' + key] === `/${this.$route.name}`) {
+          key = key[0]
+          this.menuActive = [`${key}`]
+          break
+        }
+      }
       this.role = sessionStorage.getItem('role')
     },
     mounted() {

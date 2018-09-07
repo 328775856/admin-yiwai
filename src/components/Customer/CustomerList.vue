@@ -76,6 +76,7 @@ export default {
   },
   data() {
     return {
+      role: '',
       pIsAdd: true,
       pIsLook: true,
       pCustomerInfo: {},
@@ -165,22 +166,28 @@ export default {
           align: 'center',
           render: (h, params) => {
             const { customerDto, commentNum } = params.row
-            return (
-              <div>
+            if(this.role !== '1'){
+              return (
+                <div>
                 <p>{commentNum}</p>
                 <p
-                  class="edit"
-                  onClick={() =>
-                    this.$router.push({
-                      path: '/Comment',
-                      query: { customerId: customerDto.id }
-                    })
-                  }
-                >
-                  查看评论
-                </p>
+            class="edit"
+              onClick={() =>
+              this.$router.push({
+                path: '/Comment',
+                query: { customerId: customerDto.id }
+              })
+            }
+            >
+              查看评论
+              </p>
               </div>
             )
+            }else{
+              return (
+                <p>{commentNum}</p>
+            )
+            }
           }
         },
         {
@@ -247,6 +254,7 @@ export default {
     }
   },
   created() {
+    this.role = sessionStorage.getItem('role')
     const { params } = this.$route
     if (params.customerName) {
       this.nickName = params.customerName

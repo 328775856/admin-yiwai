@@ -227,6 +227,8 @@ export default {
           sortType: '',
           render: (h, params) => {
             const { artistId, commentNum } = params.row
+
+
             if(this.role !== '1'){
             return (
               <div>

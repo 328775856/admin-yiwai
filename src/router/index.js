@@ -365,14 +365,22 @@ router.beforeEach((to, from, next) => {
       })
     } else {
       next()
+
       // 获取登录后的角色信息
       const role = sessionStorage.getItem('role')
       // 注册后传入相关权限数组
-      let arr = ['Index', 'Base','Video','System','Museum','Youth','Fall']
-        // 拦截跳转路由
-        if (arr.indexOf(to.name)=== -1 && role === '1') {
+      let arr = ['Index', 'Base', 'Video', 'System', 'Museum', 'Youth', 'Fall', 'Person', 'AddArt']
+      // 拦截跳转路由
+      if (arr.indexOf(to.name) === -1 && role === '1') {
+        // 判断hash值控制刷新后hash重复返回时返回到上一页
+        let url = window.location.hash.replace('#', '')
+        let reg = new RegExp(`^\/${url}$`)
+        if (reg.test(`/${url}`)) {
+          router.push({path: '/Error'})
+        } else {
           router.replace({path: '/Error'})
         }
+      }
     }
   } else {
     next()

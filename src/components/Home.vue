@@ -193,8 +193,7 @@
       // 刷新后保持菜单路由
       for (let key in this.routerObj) {
         if (this.routerObj['' + key] === `/${this.$route.name}`) {
-          key = key[0]
-          this.menuActive = [`${key}`]
+          this.menuActive = [`${key[0]}`]
           break
         }
       }

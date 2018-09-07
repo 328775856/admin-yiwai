@@ -41,6 +41,16 @@
     },
     mounted() {
     },
+    beforeRouteLeave(to, from, next) {
+      // 注册后传入相关权限数组
+      let arr = ['Index', 'Base', 'Video', 'System', 'Museum', 'Youth', 'Fall', 'Person', 'AddArt']
+      // 拦截跳转路由
+      if (arr.indexOf(to.name) === -1) {
+        this.$router.replace({path: '/Error'})
+      } else {
+        next()
+      }
+    },
     methods: {
       back() {
         this.$router.back()

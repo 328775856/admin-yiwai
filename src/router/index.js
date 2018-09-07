@@ -365,7 +365,6 @@ router.beforeEach((to, from, next) => {
       })
     } else {
       next()
-
       // 获取登录后的角色信息
       const role = sessionStorage.getItem('role')
       // 注册后传入相关权限数组
@@ -380,6 +379,7 @@ router.beforeEach((to, from, next) => {
         } else {
           router.replace({path: '/Error'})
         }
+        url = null
       }
     }
   } else {
